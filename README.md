@@ -4,8 +4,35 @@ Codefellows 201 week 3 project
 
 I want to build an app that can be distributed to focus groups to determine which products should be included in a catalog.
 
-------------------------------------user stories------------------------------------
 
+------------------------------------design------------------------------------
+Initial DOM setup:
+  grab all the things we'll be writing into
+
+Product constructor:
+  name
+  img filepath
+  no of wins
+  what it won against
+  what is lost to
+  discription?
+  number of times it was displayed
+
+app object:
+  storage method
+  retrieval method
+  display method
+  click method
+  objects array
+  dispalyed object array
+  data display function
+  counter
+
+event listener
+event listener function--can I put this inside of an object as a method?
+
+
+------------------------------------user stories------------------------------------
 test-subject:
 I want to be able to easily interact with the app so that I can choose things quickly
 I want to be able to view the data in a simple, easily-understood way
@@ -15,7 +42,8 @@ developer:
 I want to build a responsive app so that the app functions similarly regardless of the screen resolution
 I want to write simple, elegant, and modular code
 I want my data to persist past a page refresh using local storage
-
+I want to use skeleton or flexbox to handle the bulk of the formatting and css issues
+I want to be able to handle multiple image types for my product displays
 
 client:
 I want the app to display three products side-by-side to the test-subject
@@ -24,7 +52,7 @@ I want to collect the data from multiple users for analysis
 I want to the app to collect data in a fair way so that the data is usable
 I want to allow the user to view to collected data in a visually appealing way
 I only want to allow the user to view the data after they have made 15 total selections
-
+I want to be able to understand how each choice was ranked in the context of what it was ranked against
 
 
 ------------------------------------assignment text------------------------------------ 1/18/16
@@ -37,3 +65,7 @@ To make this market analysis maximally effective, BusMall wants you to build an 
 To keep the product selection process as untainted as possible, you have been instructed to not allow any results to be shown to the user until there have been a total of 15 selections made. Also, the marketing research team has asked that you not automatically display the results after 15 clicks, but
 
 You are also responsible for the look and feel of the app, so don't forget a custom font, color palette, layout with semantic HTML (and maybe a Skeleton or flexbox approach to layout) and so on.
+
+stretch goals:
+sort the result list
+add more statistical analysis, like how many times each was displayed, etc.
