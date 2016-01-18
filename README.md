@@ -34,7 +34,7 @@ event listener function--can I put this inside of an object as a method?
 
 ------------------------------------user stories------------------------------------
 test-subject:
-I want to be able to easily interact with the app so that I can choose things quickly
+I want to be able to easily interact with the app so that I can choose things quickly   
 I want to be able to view the data in a simple, easily-understood way
 I want to have the option to look at the total data
 
@@ -53,7 +53,7 @@ I want to the app to collect data in a fair way so that the data is usable
 I want to allow the user to view to collected data in a visually appealing way
 I only want to allow the user to view the data after they have made 15 total selections
 I want to be able to understand how each choice was ranked in the context of what it was ranked against
-
+I want to ask the user how much they would be willing to pay for it --Heyduck
 
 ------------------------------------assignment text------------------------------------ 1/18/16
 You've been hired by a startup called BusMall, whose product is similar to the SkyMall catalog found in the seatback pockets on airplanes: a catalog of assorted high-markup products provided to a captive audience seeking a mental escape from the drudgery of travel. But in this case, BusMall catalogs are placed on Puget Sound regional transit system buses... whose overall travel times are now comparable to cross-country flights, after all.
@@ -67,5 +67,5 @@ To keep the product selection process as untainted as possible, you have been in
 You are also responsible for the look and feel of the app, so don't forget a custom font, color palette, layout with semantic HTML (and maybe a Skeleton or flexbox approach to layout) and so on.
 
 stretch goals:
-sort the result list
+sort the result list   
 add more statistical analysis, like how many times each was displayed, etc.

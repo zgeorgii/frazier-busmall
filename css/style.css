@@ -1,8 +1,18 @@
-.optionDisplay {
-  border: 1px black solid;
+body {
+  background-color: #EFECCA;
 }
 
+.optionDisplay {
+  /*border: 1px black solid;*/
+}
 
+.header {
+  text-align: center;
+}
+
+.getResults {
+  align: center;
+}
 
 .productImage {
   height: 100%;
@@ -11,4 +21,9 @@
 
 .optionContainer {
   border: 1px black solid;
+  background-color: #A7A37E;
+}
+
+.productName {
+  text-align: center;
 }
