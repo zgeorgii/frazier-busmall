@@ -34,6 +34,7 @@ function imageChoice(name, source){
 
 var app = {
   counter: 0,
+  thesholdForResults: 3,
   imageArray: [],
   allImgObjects: {},
   displayedObjects: [],
@@ -111,31 +112,35 @@ var app = {
   //determines which object was clicked, updates the data, and redraws the board
   onClick: function(event){
     app.counter++;
-    if (app.counter > 3) {
+    if (app.counter > app.thesholdForResults) {
       getResults.className = 'clickableGetResults twelve columns';
     }
     var chosen = event.target.id;
-    // update the wins number and tiedWith, lostTo, and winVs lists
+    app.updateResults(chosen);
+    app.redraw();
+  },
+
+  //update the results of each of the objects in displayedObjects on click
+  updateResults(chosenId){
     for (var i = 0; i < app.displayedObjects.length; i++){
-      if (app.displayedObjects[i].name === chosen){
+      if (app.displayedObjects[i].name === chosenId){
         app.displayedObjects[i].winsNo++;
         for (var j = 0; j < app.displayedObjects.length; j++){
           if (j !== i){
             var loserName = app.displayedObjects[j].name;
-            app.allImgObjects[chosen].wonVs[loserName]++;
-            app.allImgObjects[loserName].lostTo[chosen]++;
+            app.allImgObjects[chosenId].wonVs[loserName]++;
+            app.allImgObjects[loserName].lostTo[chosenId]++;
           }
         }
       } else {
         for (var j = 0; j < app.displayedObjects.length; j++){
-          if (j !== i && app.displayedObjects[j].name !== chosen){
+          if (j !== i && app.displayedObjects[j].name !== chosenId){
             var tiedName = app.displayedObjects[j].name;
             app.displayedObjects[i].tiedWith[tiedName]++;
           }
         }
       }
     }
-    app.redraw();
   },
 
   //process the results into a usable format

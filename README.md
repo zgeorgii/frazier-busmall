@@ -25,7 +25,8 @@ Product constructor imageChoice (name, source):
 
 
 app object:
-  storage method for results -- array -- storageArray
+  storage method for results -- array -- has a subarray for each object, each of which contains a subarray for each object containing its record against that object --storageArray
+  results threshold -- number -- number of clicks before results button allowed -- thesholdForResults
   storage method for objects -- one large object using name to retrieve, one array containing the names -- allImgObjects and imageArray
   display method -- function that displays the objects to click -- redraw, calls displayAll and display
   click method --function that runs on click -- onClick
