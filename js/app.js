@@ -1,4 +1,28 @@
 'use strict';
+//Modify the charts.js bar chart
+Chart.types.Bar.extend({
+  name: 'barAlt',
+  draw: function(){
+    Chart.types.Bar.prototype.draw.apply(this, arguments);
+        this.scale.xScalePaddingLeft = 50;
+        var ctx = this.chart.ctx;
+        ctx.save();
+        // text alignment and color
+        ctx.textAlign = "center";
+        ctx.textBaseline = "bottom";
+        ctx.fillStyle = this.options.scaleFontColor;
+        // position
+        var x = this.scale.xScalePaddingLeft * 0.4;
+        var y = this.chart.height / 2;
+        // change origin
+        ctx.translate(x, y)
+        // rotate text
+        ctx.rotate(-90 * Math.PI / 180);
+        ctx.fillText(this.datasets[0].label, 0, 0);
+        ctx.restore();
+  }
+})
+
 //initial DOM setup
 var optionDisplay = document.getElementById('optionDisplay');
 var getResults = document.getElementById('getResults');
@@ -9,9 +33,19 @@ var imageConstructorArray = [];
 imageConstructorArray[0] = ['bag', 'img/bag.jpg'];
 imageConstructorArray[1] = ['banana', 'img/banana.jpg'];
 imageConstructorArray[2] = ['boots', 'img/boots.jpg'];
-imageConstructorArray[3] = ['cthulhu', 'img/cthulhu.jpg'];
-imageConstructorArray[4] = ['dragon', 'img/dragon.jpg'];
-imageConstructorArray[5] = ['pen', 'img/pen.jpg'];
+imageConstructorArray[3] = ['chair', 'img/chair.jpg'];
+imageConstructorArray[4] = ['cthulhu', 'img/cthulhu.jpg'];
+imageConstructorArray[5] = ['dragon', 'img/dragon.jpg'];
+imageConstructorArray[6] = ['pen', 'img/pen.jpg'];
+imageConstructorArray[7] = ['scissors', 'img/scissors.jpg'];
+imageConstructorArray[8] = ['shark', 'img/shark.jpg'];
+imageConstructorArray[9] = ['sweep', 'img/sweep.jpg'];
+imageConstructorArray[10] = ['unicorn', 'img/unicorn.jpg'];
+imageConstructorArray[11] = ['usb', 'img/usb.gif'];
+imageConstructorArray[12] = ['water-can', 'img/water-can.jpg'];
+imageConstructorArray[13] = ['wine-glass', 'img/wine-glass.jpg'];
+
+
 console.log('image constructor array is:');
 console.table(imageConstructorArray);
 
@@ -44,6 +78,7 @@ var app = {
   displayedObjects: [],
   imageRecordObjects: ['wonVs', 'lostTo', 'tiedWith'],
   storageArray: [],
+  mainBarGraphOptions: {scaleLabel: "<%=value%>"},
 
   //builds the initial board state
   initialize: function(){
@@ -189,19 +224,20 @@ var app = {
     app.makeCharts();
   },
 
+  //draws the chart onto the page
   makeCharts: function(){
     //build my canvas element
     chartDisplay.innerHTML = '';
     app.canvas = document.createElement('canvas');
     app.canvas.id = 'dataPlot';
-    app.canvas.className = 'twelve columns';
+    app.canvas.width = '960';
     chartDisplay.appendChild(app.canvas);
     app.context = app.canvas.getContext('2d');
 
     //process the data and build the chart
     app.processDataForMainBarGraph();
     console.dir(app.dataToPlot);
-    var mainBarChart = new Chart(app.context).Bar(app.dataToPlot, app.mainBarGraphOptions);
+    var mainBarChart = new Chart(app.context).barAlt(app.dataToPlot, app.mainBarGraphOptions);
   },
 
   removeDuplicatesInStorage: function(){
@@ -222,7 +258,7 @@ var app = {
       newDataToPlot.labels.push(app.storageArray[i][0]);
       barChartPercentWins.push(+(app.storageArray[i][1]).toFixed(3));
     }
-    var mainBarChartDataSet = new app.barChartDataSet(['Win percents', 'rgba(220,220,220,0.5)', 'rgba(220,220,220,0.8)', 'rgba(220,220,220,0.75)', 'rgba(220,220,220,1)', barChartPercentWins]);
+    var mainBarChartDataSet = new app.barChartDataSet(['Win percent', 'rgba(220,220,220,0.5)', 'rgba(220,220,220,0.8)', 'rgba(220,220,220,0.75)', 'rgba(220,220,220,1)', barChartPercentWins]);
     newDataToPlot.datasets.push(mainBarChartDataSet);
     app.dataToPlot = newDataToPlot;
   },

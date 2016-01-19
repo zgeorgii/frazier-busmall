@@ -10,6 +10,11 @@ body {
   text-align: center;
 }
 
+/*#dataPlot {
+  width: 100% !important;
+  margin-left: 0;
+}*/
+
 .getResults {
   align: center;
 }
