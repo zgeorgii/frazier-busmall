@@ -25,7 +25,6 @@ function imageChoice(name, source){
   this.priceList = [];
 }
 
-
 //app object
 app = {
   counter: 0,
@@ -39,7 +38,17 @@ app = {
     for(var i = 0; i < imageConstructorArray.length; i++){
       var newImageObj = new imageChoice(imageConstructorArray[i][0], imageConstructorArray[i][1]);
       app.imageKey[newImageObj.name] = i;
+      for (var key in newImageObj){
+        if (newImageObj[key] instanceof Array){
+          for (var j = 0; j < imageConstructorArray.length; j++){
+            newImageObj[key].push(0);
+          }
+          // console.log(key);
+          // console.log(newImageObj[key]);
+        }
+      }
       app.allImgObjects.push(newImageObj);
+
     }
     console.log('app.allImgObjects is:');
     console.log(app.allImgObjects);
@@ -53,19 +62,25 @@ app = {
     var chosen = e.target.id;
     for (var i = 0; i < app.displayedObjects.length; i++){
       if (app.displayedObjects[i].name === chosen){
-        //up it's number of wins
+        //up its number of wins
         app.displayedObjects[i].winsNo++;
         //update the wins number and the loss number
         for (var j = 0; j < app.displayedObjects.length; j++){
           if (j !== i){
-            app.displayedObjects[i].wonVs.push(app.displayedObjects[j].name);
-            app.displayedObjects[j].lostTo.push(chosen);
+            var wonVsSpot = app.displayedObjects[i].wonVs[app.imageKey[app.displayedObjects[j].name]];
+            wonVsSpot++;
+            var lostToSpot = app.displayedObjects[j].lostTo[app.imageKey[chosen]];
+            lostToSpot++;
+            app.displayedObjects[i].wonVs[app.imageKey[app.displayedObjects[j].name]]++;
+            app.displayedObjects[j].lostTo[app.imageKey[chosen]]++;
           }
         }
       } else {
         for (var j = 0; j  < app.displayedObjects.length; j++){
           if (j !== i && app.displayedObjects[j].name !== chosen){
-            app.displayedObjects[i].tiedWith.push(app.displayedObjects[j].name);
+            var tiedWithSpot = app.displayedObjects[i].tiedWith[app.imageKey[app.displayedObjects[j].name]];
+            tiedWithSpot++;
+            app.displayedObjects[i].tiedWith[app.imageKey[app.displayedObjects[j].name]]++;
           }
         }
       }

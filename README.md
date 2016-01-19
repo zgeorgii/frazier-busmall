@@ -69,3 +69,17 @@ You are also responsible for the look and feel of the app, so don't forget a cus
 stretch goals:
 sort the result list   
 add more statistical analysis, like how many times each was displayed, etc.
+
+NOTES: deciding on storage type for wonVs, lostTo, tiedWith:
+currently an array like ['boots', 'cthulhu', 'boots', ...]
+needs to be processed before it can be used for charts--could be processed by another app function:
+for loop to iterate through objects, for x in obj loop && type = array to find arrays
+
+OR could store as an obj:
+if (obj[lostTo]){
+  obj[lostTo]++
+} else {
+  obj[lostTo]=1
+}
+
+OR could make all wonVs, lostTo, tiedWith, etc. arrays that have initial values [0,0,....] and use imageKey to go between boots and the index that should be incremented 
