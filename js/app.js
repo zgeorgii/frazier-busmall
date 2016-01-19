@@ -23,6 +23,9 @@ function imageChoice(name, source){
   this.wonVs = [];
   this.tiedWith = [];
   this.priceList = [];
+  this.getWinPercent = function(){
+    return this.winsNo / this.displayedNo;
+  }
 }
 
 //app object
@@ -43,8 +46,6 @@ app = {
           for (var j = 0; j < imageConstructorArray.length; j++){
             newImageObj[key].push(0);
           }
-          // console.log(key);
-          // console.log(newImageObj[key]);
         }
       }
       app.allImgObjects.push(newImageObj);
@@ -67,10 +68,6 @@ app = {
         //update the wins number and the loss number
         for (var j = 0; j < app.displayedObjects.length; j++){
           if (j !== i){
-            var wonVsSpot = app.displayedObjects[i].wonVs[app.imageKey[app.displayedObjects[j].name]];
-            wonVsSpot++;
-            var lostToSpot = app.displayedObjects[j].lostTo[app.imageKey[chosen]];
-            lostToSpot++;
             app.displayedObjects[i].wonVs[app.imageKey[app.displayedObjects[j].name]]++;
             app.displayedObjects[j].lostTo[app.imageKey[chosen]]++;
           }
@@ -78,8 +75,6 @@ app = {
       } else {
         for (var j = 0; j  < app.displayedObjects.length; j++){
           if (j !== i && app.displayedObjects[j].name !== chosen){
-            var tiedWithSpot = app.displayedObjects[i].tiedWith[app.imageKey[app.displayedObjects[j].name]];
-            tiedWithSpot++;
             app.displayedObjects[i].tiedWith[app.imageKey[app.displayedObjects[j].name]]++;
           }
         }
@@ -134,20 +129,33 @@ app = {
   },
 
   processResults: function(){
-    for (var i = 0; i < app.allImgObjects.length; i++){
-
-
+    //sort the objects by most to least wins
+    app.allImgObjects.sort(function( a, b){
+      return  b.getWinPercent() - a.getWinPercent();
+    })
+    //update the numbers in imageKey
+    for (var i = 0; i < app.allImgObjects.lenth; i++){
+      app.imageKey[app.allImgObjects[i].name] = i;
     }
   },
 
   summarizeResults: function(){
-    for (var i = 0; i < app.allImgObjects.length; i++){
-      console.log('name ' + app.allImgObjects[i].name);
-      console.log('displayedNo ' + app.allImgObjects[i].displayedNo);
-      console.log('winsNo ' + app.allImgObjects[i].winsNo);
-      console.log('wonVs ' + app.allImgObjects[i].wonVs);
-      console.log('lostTo ' + app.allImgObjects[i].lostTo);
-      console.log('tiedWith ' + app.allImgObjects[i].tiedWith);
+    if(app.counter > 14){
+      for (var i = 0; i < app.allImgObjects.length; i++){
+        console.log('name ');
+        console.log(app.allImgObjects[i].name);
+        console.log(app.allImgObjects[i].getWinPercent());
+        console.log('displayedNo ');
+        console.log( app.allImgObjects[i].displayedNo);
+        console.log('winsNo ');
+        console.log( app.allImgObjects[i].winsNo);
+        console.log('wonVs ');
+        console.log(app.allImgObjects[i].wonVs);
+        console.log('lostTo ' );
+        console.log(app.allImgObjects[i].lostTo);
+        console.log('tiedWith ' );
+        console.log(app.allImgObjects[i].tiedWith);
+      }
     }
   }
 
@@ -157,4 +165,7 @@ app.initialize();
 
 //event handlers
 optionDisplay.addEventListener('click', app.onClick);
-getResults.addEventListener('click', app.summarizeResults)
+getResults.addEventListener('click', function(){
+  app.processResults();
+  app.summarizeResults();
+})

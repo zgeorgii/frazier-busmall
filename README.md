@@ -34,26 +34,26 @@ event listener function--can I put this inside of an object as a method?
 
 ------------------------------------user stories------------------------------------
 test-subject:
-I want to be able to easily interact with the app so that I can choose things quickly   
-I want to be able to view the data in a simple, easily-understood way
-I want to have the option to look at the total data
+I want to be able to easily interact with the app so that I can choose things quickly      X
+I want to be able to view the data in a simple, easily-understood way      
+I want to have the option to look at the total data      
 
 developer:
-I want to build a responsive app so that the app functions similarly regardless of the screen resolution
-I want to write simple, elegant, and modular code
-I want my data to persist past a page refresh using local storage
-I want to use skeleton or flexbox to handle the bulk of the formatting and css issues
-I want to be able to handle multiple image types for my product displays
+I want to build a responsive app so that the app functions similarly regardless of the screen resolution     X
+I want to write simple, elegant, and modular code       
+I want my data to persist past a page refresh using local storage      
+I want to use skeleton or flexbox to handle the bulk of the formatting and css issues      X
+I want to be able to handle multiple image types for my product displays       
 
 client:
-I want the app to display three products side-by-side to the test-subject
-I want the subject to be able to choose which of the products they would be most likely to purchase
-I want to collect the data from multiple users for analysis
-I want to the app to collect data in a fair way so that the data is usable
-I want to allow the user to view to collected data in a visually appealing way
-I only want to allow the user to view the data after they have made 15 total selections
-I want to be able to understand how each choice was ranked in the context of what it was ranked against
-I want to ask the user how much they would be willing to pay for it --Heyduck
+I want the app to display three products side-by-side to the test-subject    X
+I want the subject to be able to choose which of the products they would be most likely to purchase   X
+I want to collect the data from multiple users for analysis     
+I want to the app to collect data in a fair way so that the data is usable    X
+I want to allow the user to view to collected data in a visually appealing way     
+I only want to allow the user to view the data after they have made 15 total selections         X
+I want to be able to understand how each choice was ranked in the context of what it was ranked against   X
+I want to ask the user how much they would be willing to pay for it --Heyduck idea
 
 ------------------------------------assignment text------------------------------------ 1/18/16
 You've been hired by a startup called BusMall, whose product is similar to the SkyMall catalog found in the seatback pockets on airplanes: a catalog of assorted high-markup products provided to a captive audience seeking a mental escape from the drudgery of travel. But in this case, BusMall catalogs are placed on Puget Sound regional transit system buses... whose overall travel times are now comparable to cross-country flights, after all.
@@ -82,4 +82,4 @@ if (obj[lostTo]){
   obj[lostTo]=1
 }
 
-OR could make all wonVs, lostTo, tiedWith, etc. arrays that have initial values [0,0,....] and use imageKey to go between boots and the index that should be incremented 
+OR could make all wonVs, lostTo, tiedWith, etc. arrays that have initial values [0,0,....] and use imageKey to go between boots and the index that should be incremented
