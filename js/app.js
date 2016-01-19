@@ -1,3 +1,4 @@
+'use strict';
 //initial DOM setup
 var optionDisplay = document.getElementById('optionDisplay');
 var getResults = document.getElementById('getResults');
@@ -31,7 +32,7 @@ function imageChoice(name, source){
 }
 
 
-app = {
+var app = {
   counter: 0,
   imageArray: [],
   allImgObjects: {},
@@ -128,7 +129,7 @@ app = {
       } else {
         for (var j = 0; j < app.displayedObjects.length; j++){
           if (j !== i && app.displayedObjects[j].name !== chosen){
-            tiedName = app.displayedObjects[j].name;
+            var tiedName = app.displayedObjects[j].name;
             app.displayedObjects[i].tiedWith[tiedName]++;
           }
         }

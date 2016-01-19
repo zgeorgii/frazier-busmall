@@ -54,6 +54,7 @@ I want to be able to handle multiple image types for my product displays
 I want to store the data for my client and return it in a sorted and easily usable format   X
 I want to build cool looking charts that are informative for my client and my users
 I want mouseover events to indicate which item the user is about to select  (alt for images?)
+I want to make the results button differentiate between the first time its clicked and when it's clicked again if new data has been added so it's clear that the dataset has changed
 
 client:
 I want the app to display three products side-by-side to the test-subject    X
