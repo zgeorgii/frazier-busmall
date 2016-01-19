@@ -21,10 +21,12 @@ function imageChoice(name, source){
   this.displayedNo = 0;
   this.lostTo = {};
   this.wonVs = {};
+  this.winPercent;
   this.tiedWith = {};
   this.priceList = [];
   this.getWinPercent = function(){
-    return this.winsNo / this.displayedNo;
+    this.winPercent = this.winsNo / this.displayedNo;
+    return this.winPercent;
   }
 }
 
@@ -34,6 +36,8 @@ app = {
   imageArray: [],
   allImgObjects: {},
   displayedObjects: [],
+  imageRecordObjects: ['wonVs', 'lostTo', 'tiedWith'],
+  storageArray: [],
 
   //builds the initial board state
   initialize: function(){
@@ -106,7 +110,7 @@ app = {
   //determines which object was clicked, updates the data, and redraws the board
   onClick: function(event){
     app.counter++;
-    if (app.counter > 15) {
+    if (app.counter > 3) {
       getResults.className = 'clickableGetResults twelve columns';
     }
     var chosen = event.target.id;
@@ -123,7 +127,7 @@ app = {
         }
       } else {
         for (var j = 0; j < app.displayedObjects.length; j++){
-          if (j !== i && app.displayedObjects.name !== chosen){
+          if (j !== i && app.displayedObjects[j].name !== chosen){
             tiedName = app.displayedObjects[j].name;
             app.displayedObjects[i].tiedWith[tiedName]++;
           }
@@ -133,21 +137,45 @@ app = {
     app.redraw();
   },
 
+  //process the results into a usable format
   getResults: function(){
-    console.log('before sort:');
-    console.log(app.imageArray);
+    //reset storage
+    app.storageArray = [];
+    //sort app.imageArray by win percent
     app.imageArray.sort(function(a,b){
-      console.log(a);
-      console.log(app.allImgObjects[a].getWinPercent());
-
-      app.allImgObjects[b].getWinPercent() - app.allImgObjects[a].getWinPercent()
+      return app.allImgObjects[b].getWinPercent() - app.allImgObjects[a].getWinPercent()
     })
-    console.log('after sort');
-    console.log(app.imageArray);
+    //iterate through image array and create an array to store the date from each one
     for (var i = 0; i < app.imageArray.length; i++){
-      console.dir(app.allImgObjects[app.imageArray[i]])
+      var thisImageObj = app.allImgObjects[app.imageArray[i]];
+      var thisStorageArrayEntry = [];
+      console.dir(thisImageObj);
+      thisStorageArrayEntry.push(thisImageObj.name);
+      thisStorageArrayEntry.push(thisImageObj.winPercent);
+      thisStorageArrayEntry.push(thisImageObj.winsNo);
+      thisStorageArrayEntry.push(thisImageObj.displayedNo);
+      //one of these for each image object that contains its record against each other object
+      var thisRecordList = [];
+      // iterate through the entries in the subobjects
+      for (var j = 0; j < app.imageArray.length; j++){
+        //one of these for each object
+        var thisRecordListEntry = [];
+        //add object name
+        thisRecordListEntry.push(app.imageArray[j]);
+        //iterate through thisImageObj's record lists
+        for (var k = 0; k < app.imageRecordObjects.length; k++){
+          //grab the list object wonVs, lostTo, tiedWith
+          var thisListObject = thisImageObj[app.imageRecordObjects[k]];
+          //update the recordListEntry for object j with the no. of wins, losses, ties
+          thisRecordListEntry.push(thisListObject[app.imageArray[j]]);
+        }
+        thisRecordList.push(thisRecordListEntry);
+      }
+      //update the lists
+      thisStorageArrayEntry.push(thisRecordList);
+      app.storageArray.push(thisStorageArrayEntry);
     }
-
+    console.log(app.storageArray);
   }
 
 }

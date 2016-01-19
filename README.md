@@ -54,6 +54,7 @@ I want to allow the user to view to collected data in a visually appealing way
 I only want to allow the user to view the data after they have made 15 total selections         X
 I want to be able to understand how each choice was ranked in the context of what it was ranked against   X
 I want to ask the user how much they would be willing to pay for it --Heyduck idea
+Potentially want to show the user each object at least once before asking them to rank the others again
 
 ------------------------------------assignment text------------------------------------ 1/18/16
 You've been hired by a startup called BusMall, whose product is similar to the SkyMall catalog found in the seatback pockets on airplanes: a catalog of assorted high-markup products provided to a captive audience seeking a mental escape from the drudgery of travel. But in this case, BusMall catalogs are placed on Puget Sound regional transit system buses... whose overall travel times are now comparable to cross-country flights, after all.
