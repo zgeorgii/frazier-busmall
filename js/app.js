@@ -11,7 +11,7 @@ imageConstructorArray[3] = ['cthulhu', 'img/cthulhu.jpg'];
 imageConstructorArray[4] = ['dragon', 'img/dragon.jpg'];
 imageConstructorArray[5] = ['pen', 'img/pen.jpg'];
 console.log('image constructor array is:');
-console.log(imageConstructorArray);
+console.table(imageConstructorArray);
 
 //image object constructor
 function imageChoice(name, source){
@@ -149,7 +149,7 @@ app = {
     for (var i = 0; i < app.imageArray.length; i++){
       var thisImageObj = app.allImgObjects[app.imageArray[i]];
       var thisStorageArrayEntry = [];
-      console.dir(thisImageObj);
+      //console.dir(thisImageObj);
       thisStorageArrayEntry.push(thisImageObj.name);
       thisStorageArrayEntry.push(thisImageObj.winPercent);
       thisStorageArrayEntry.push(thisImageObj.winsNo);
