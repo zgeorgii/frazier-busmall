@@ -2,34 +2,41 @@
 Codefellows 201 week 3 project
 
 
-I want to build an app that can be distributed to focus groups to determine which products should be included in a catalog.
+This is an app that can be distributed to focus groups to determine which products should be included in a catalog.
 
 
 ------------------------------------design------------------------------------
 Initial DOM setup:
   grab all the things we'll be writing into
 
-Product constructor:
-  name
-  img filepath
-  no of wins
-  what it won against
-  what is lost to
-  discription?
-  number of times it was displayed
+Product constructor imageChoice (name, source):
+  name -- string -- name
+  img filepath -- string -- source
+  no of wins -- number -- winsNo
+  win percent -- number -- winPercent
+  what it won against -- object -- wonVs
+  what it lost to -- object -- lostTo
+  what it tied with -- object -- tiedWith
+  number of times displayed -- number -- displayedNo
+  update win percent --function -- getWinPercent
+  description?
+  price list?
+
+
 
 app object:
-  storage method
-  retrieval method
-  display method
-  click method
-  objects array
-  dispalyed object array
-  data display function
-  counter
+  storage method for results -- array -- storageArray
+  storage method for objects -- one large object using name to retrieve, one array containing the names -- allImgObjects and imageArray
+  display method -- function that displays the objects to click -- redraw, calls displayAll and display
+  click method --function that runs on click -- onClick
+  displayed object array -- array of the three objects shown on screen -- displayedObjects
+  data display function -- function to draw charts when results button clicked -- doesn't exist yet
+  counter -- number of times an object has been clicked -- counter
+  storage retrieval -- get results out of local storage -- doesn't exist yet
+  storage method-- puts results into local storage --doesn't exist yet
 
-event listener
-event listener function--can I put this inside of an object as a method?
+event listener for each image
+event listener for results button
 
 
 ------------------------------------user stories------------------------------------
@@ -42,8 +49,11 @@ developer:
 I want to build a responsive app so that the app functions similarly regardless of the screen resolution     X
 I want to write simple, elegant, and modular code       
 I want my data to persist past a page refresh using local storage      
-I want to use skeleton or flexbox to handle the bulk of the formatting and css issues      X
-I want to be able to handle multiple image types for my product displays       
+I want to use skeleton to handle the bulk of the formatting and css issues      X
+I want to be able to handle multiple image types for my product displays      
+I want to store the data for my client and return it in a sorted and easily usable format   X
+I want to build cool looking charts that are informative for my client and my users
+I want mouseover events to indicate which item the user is about to select  (alt for images?)
 
 client:
 I want the app to display three products side-by-side to the test-subject    X
@@ -55,6 +65,7 @@ I only want to allow the user to view the data after they have made 15 total sel
 I want to be able to understand how each choice was ranked in the context of what it was ranked against   X
 I want to ask the user how much they would be willing to pay for it --Heyduck idea
 Potentially want to show the user each object at least once before asking them to rank the others again
+potentially add a logo for the project to remind user
 
 ------------------------------------assignment text------------------------------------ 1/18/16
 You've been hired by a startup called BusMall, whose product is similar to the SkyMall catalog found in the seatback pockets on airplanes: a catalog of assorted high-markup products provided to a captive audience seeking a mental escape from the drudgery of travel. But in this case, BusMall catalogs are placed on Puget Sound regional transit system buses... whose overall travel times are now comparable to cross-country flights, after all.
@@ -70,17 +81,3 @@ You are also responsible for the look and feel of the app, so don't forget a cus
 stretch goals:
 sort the result list   
 add more statistical analysis, like how many times each was displayed, etc.
-
-NOTES: deciding on storage type for wonVs, lostTo, tiedWith:
-currently an array like ['boots', 'cthulhu', 'boots', ...]
-needs to be processed before it can be used for charts--could be processed by another app function:
-for loop to iterate through objects, for x in obj loop && type = array to find arrays
-
-OR could store as an obj:
-if (obj[lostTo]){
-  obj[lostTo]++
-} else {
-  obj[lostTo]=1
-}
-
-OR could make all wonVs, lostTo, tiedWith, etc. arrays that have initial values [0,0,....] and use imageKey to go between boots and the index that should be incremented
