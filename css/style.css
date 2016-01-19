@@ -27,3 +27,12 @@ body {
 .productName {
   text-align: center;
 }
+
+.getResults {
+  display: none;
+}
+
+.clickableGetResults {
+  background-color: #046380;
+  color: #EFECCA;
+}
