@@ -2,6 +2,7 @@
 //initial DOM setup
 var optionDisplay = document.getElementById('optionDisplay');
 var getResults = document.getElementById('getResults');
+var chartDisplay = document.getElementById('chartDisplay');
 
 //initial images array setup
 var imageConstructorArray = [];
@@ -34,8 +35,11 @@ function imageChoice(name, source){
 
 var app = {
   counter: 0,
+  canvas: '',
+  context: '',
   thesholdForResults: 3,
   imageArray: [],
+  dataToPlot: {},
   allImgObjects: {},
   displayedObjects: [],
   imageRecordObjects: ['wonVs', 'lostTo', 'tiedWith'],
@@ -182,6 +186,54 @@ var app = {
       app.storageArray.push(thisStorageArrayEntry);
     }
     console.log(app.storageArray);
+    app.makeCharts();
+  },
+
+  makeCharts: function(){
+    //build my canvas element
+    chartDisplay.innerHTML = '';
+    app.canvas = document.createElement('canvas');
+    app.canvas.id = 'dataPlot';
+    app.canvas.className = 'twelve columns';
+    chartDisplay.appendChild(app.canvas);
+    app.context = app.canvas.getContext('2d');
+
+    //process the data and build the chart
+    app.processDataForMainBarGraph();
+    console.dir(app.dataToPlot);
+    var mainBarChart = new Chart(app.context).Bar(app.dataToPlot, app.mainBarGraphOptions);
+  },
+
+  removeDuplicatesInStorage: function(){
+    for (var i = 0; i < app.storageArray.length; i++){
+      app.storageArray[i][4].splice(i, 1);
+    }
+    console.log(app.storageArray);
+  },
+
+  processDataForMainBarGraph: function (){
+    app.removeDuplicatesInStorage();
+    var newDataToPlot = {
+      labels: [],
+      datasets: []
+    }
+    var barChartPercentWins = [];
+    for (var i = 0; i < app.storageArray.length; i++){
+      newDataToPlot.labels.push(app.storageArray[i][0]);
+      barChartPercentWins.push(+(app.storageArray[i][1]).toFixed(3));
+    }
+    var mainBarChartDataSet = new app.barChartDataSet(['Win percents', 'rgba(220,220,220,0.5)', 'rgba(220,220,220,0.8)', 'rgba(220,220,220,0.75)', 'rgba(220,220,220,1)', barChartPercentWins]);
+    newDataToPlot.datasets.push(mainBarChartDataSet);
+    app.dataToPlot = newDataToPlot;
+  },
+
+  barChartDataSet: function(arrayInput) {
+    this.label = arrayInput[0];
+    this.fillColor = arrayInput[1];
+    this.strokeColor = arrayInput[2];
+    this.highlightFill = arrayInput[3];
+    this.highlightStroke = arrayInput[4];
+    this.data = arrayInput[5];
   }
 
 }

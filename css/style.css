@@ -36,3 +36,7 @@ body {
   background-color: #046380;
   color: #EFECCA;
 }
+
+canvas {
+  border: 1px black solid;
+}
