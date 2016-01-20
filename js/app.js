@@ -4,37 +4,37 @@ Chart.types.Bar.extend({
   name: 'barAlt',
   draw: function(){
     Chart.types.Bar.prototype.draw.apply(this, arguments);
-        this.scale.xScalePaddingLeft = 75;
-        var ctx = this.chart.ctx;
-        ctx.save();
-        // text alignment and color
-        ctx.textAlign = "center";
-        ctx.textBaseline = "bottom";
-        ctx.fillStyle = this.options.scaleFontColor;
-        // position
-        var x = this.scale.xScalePaddingLeft * 0.4;
-        var y = this.chart.height / 2;
-        // change origin
-        ctx.translate(x, y)
-        // rotate text
-        ctx.rotate(-90 * Math.PI / 180);
-        ctx.fillText(app.labelYAxis, 0, 0);
-        ctx.restore();
+    this.scale.xScalePaddingLeft = 75;
+    var ctx = this.chart.ctx;
+    ctx.save();
+    // text alignment and color
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+    ctx.fillStyle = this.options.scaleFontColor;
+    // position
+    var x = this.scale.xScalePaddingLeft * 0.4;
+    var y = this.chart.height / 2;
+    // change origin
+    ctx.translate(x, y);
+    // rotate text
+    ctx.rotate(-90 * Math.PI / 180);
+    ctx.fillText(app.labelYAxis, 0, 0);
+    ctx.restore();
   }
-})
+});
 
 //add a method to be able to get element's widths
 Element.prototype.getElementWidth = function() {
-	   if (typeof this.clip !== "undefined") {
-	      return this.clip.width;
-	   } else {
-	      if (this.style.pixelWidth) {
-	         return this.style.pixelWidth;
-	      } else {
-	         return this.offsetWidth;
-	      }
-	   }
-	};
+  if (typeof this.clip !== 'undefined') {
+    return this.clip.width;
+  } else {
+    if (this.style.pixelWidth) {
+      return this.style.pixelWidth;
+    } else {
+      return this.offsetWidth;
+    }
+  }
+};
 
 //initial DOM setup
 var optionDisplay = document.getElementById('optionDisplay');
@@ -74,7 +74,7 @@ function imageChoice(name, source){
   this.getWinPercent = function(){
     this.winPercent = this.winsNo / this.displayedNo;
     return this.winPercent;
-  }
+  };
 }
 
 
@@ -93,8 +93,7 @@ var app = {
   displayedObjects: [],
   imageRecordObjects: ['wonVs', 'lostTo', 'tiedWith'],
   storageArray: [],
-  mainBarGraphOptions: {scaleLabel: "<%=value%>"},
-  thisChart: '',
+  mainBarGraphOptions: {scaleLabel: '<%=value%>'},
   plotToMake: '',
 
   //builds the initial board state
@@ -108,7 +107,7 @@ var app = {
       getResults.textContent = 'Get Results';
       app.plotToMake = '';
       app.getResults();
-    })
+    });
     window.addEventListener('resize', function(){
       console.log('resize event');
       app.onResize();
@@ -189,6 +188,7 @@ var app = {
     app.redraw();
   },
 
+  //updates the size of the canvas element when the window is resized
   onResize: function(){
     var containerWidth = document.getElementById('container');
     containerWidth = containerWidth.getElementWidth();
@@ -203,7 +203,7 @@ var app = {
   },
 
   //update the results of each of the objects in displayedObjects on click
-  updateResults(chosenId){
+  updateResults: function(chosenId){
     for (var i = 0; i < app.displayedObjects.length; i++){
       if (app.displayedObjects[i].name === chosenId){
         app.displayedObjects[i].winsNo++;
@@ -231,8 +231,8 @@ var app = {
     app.storageArray = [];
     //sort app.imageArray by win percent
     app.imageArray.sort(function(a,b){
-      return app.allImgObjects[b].getWinPercent() - app.allImgObjects[a].getWinPercent()
-    })
+      return app.allImgObjects[b].getWinPercent() - app.allImgObjects[a].getWinPercent();
+    });
     //iterate through image array and create an array to store the date from each one
     for (var i = 0; i < app.imageArray.length; i++){
       var thisImageObj = app.allImgObjects[app.imageArray[i]];
@@ -285,7 +285,7 @@ var app = {
     if (indicator) { //not sure why this works this way
       var reminderPara = document.createElement('p');
       reminderPara.className = 'reminderPara';
-      reminderPara.textContent = "Click a bar to learn more about that product's ranking.";
+      reminderPara.textContent = 'Click a bar to learn more about that product\'s ranking.';
       reminderText.appendChild(reminderPara);
     }
   },
@@ -312,11 +312,11 @@ var app = {
       app.thisChart = mainBarChart;
       app.drawReminderText('clear');
     //draw a plot for an individual object
-  } else if (app.plotToMake){
+    } else if (app.plotToMake){
       getResults.textContent = 'Back to summary plot';
-      console.log(app.plotToMake)
+      console.log(app.plotToMake);
       app.chartTitle = 'Breakdown of record for ' + app.plotToMake;
-      app.labelYAxis = 'Number of times'
+      app.labelYAxis = 'Number of times';
       app.drawChartLabel();
       app.processDataForObjectBarGraph(app.plotToMake);
       var productBarChart = new Chart(app.context).barAlt(app.dataToPlot, app.mainBarGraphOptions);
@@ -328,13 +328,13 @@ var app = {
     app.canvas.addEventListener('click', function(e){
       // console.dir(e);
       // console.log('canvas event listener');
-      var clickedBar  = app.thisChart.getBarsAtEvent(e)
+      var clickedBar  = app.thisChart.getBarsAtEvent(e);
       // console.log(clickedBar[0]);
       // console.log(typeof clickedBar[0]);
       // console.log(clickedBar[0]['label']);
       app.plotToMake = clickedBar[0]['label'];
       app.getResults();
-    })
+    });
   },
 
   //fixes the stored data so that their win, loss, and tie record don't include a blank entry for matches against themselves
@@ -351,7 +351,7 @@ var app = {
     var newDataToPlot = {
       labels: [],
       datasets: []
-    }
+    };
     var barChartPercentWins = [];
     for (var i = 0; i < app.storageArray.length; i++){
       newDataToPlot.labels.push(app.storageArray[i][0]);
@@ -363,14 +363,14 @@ var app = {
   },
 
   //format data for an individual object's chart
-  processDataForObjectBarGraph(objectToPlot){
+  processDataForObjectBarGraph: function(objectToPlot){
     console.log('inside object to plot');
     console.log(objectToPlot);
     app.removeDuplicatesInStorage();
     var newDataToPlot = {
       labels: [],
       datasets: []
-    }
+    };
     var wins = [];
     var losses =[];
     var ties = [];
@@ -401,7 +401,7 @@ var app = {
     this.data = arrayInput[5];
   }
 
-}
+};
 
 
 
