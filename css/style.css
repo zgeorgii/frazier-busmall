@@ -24,9 +24,21 @@ body {
   width: 100%;
 }
 
+.reminderPara {
+  text-align: center;
+}
+
 .optionContainer {
   border: 1px black solid;
   background-color: #A7A37E;
+}
+
+.optionContainer:hover {
+  box-shadow: 10px 10px 10px 10px grey;
+}
+
+.chartTitle {
+  text-align: center;
 }
 
 .productName {
@@ -35,6 +47,10 @@ body {
 
 .hidden {
   display: none;
+}
+
+.not-shown {
+  visibility: hidden;
 }
 
 .clickableGetResults {

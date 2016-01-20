@@ -67,6 +67,7 @@ function imageChoice(name, source){
 
 var app = {
   counter: 0,
+  canvasWidth: '960',
   chartTitle: 'Object wins as a percentage of times displayed',
   labelYAxis: '',
   thisChart: '',
@@ -80,11 +81,20 @@ var app = {
   imageRecordObjects: ['wonVs', 'lostTo', 'tiedWith'],
   storageArray: [],
   mainBarGraphOptions: {scaleLabel: "<%=value%>"},
+  thisChart: '',
 
   //builds the initial board state
   initialize: function(){
+    //rest stuff
     app.counter = 0;
     app.allImgObjects = {};
+    //event handlers
+    optionDisplay.addEventListener('click', app.onClick);
+    getResults.addEventListener('click', function(){
+      getResults.textContent = 'Get Results';
+      app.getResults();
+    })
+    window.addEventListener('resize', app.onResize);
     //iterate through and build all the image objects
     for (var i = 0; i < imageConstructorArray.length; i++){
       var newImageObj = new imageChoice(imageConstructorArray[i][0], imageConstructorArray[i][1]);
@@ -101,6 +111,7 @@ var app = {
       app.imageArray.push(imageConstructorArray[i][0]);
     }
     //draw the intial state
+    app.onResize();
     app.displayAll();
   },
 
@@ -155,9 +166,21 @@ var app = {
     if (app.counter > app.thesholdForResults) {
       getResults.className = 'clickableGetResults twelve columns';
     }
-    var chosen = event.target.id;
-    app.updateResults(chosen);
+    var chosenId = event.target.id;
+    app.updateResults(chosenId);
     app.redraw();
+  },
+
+  onResize: function(){
+    var windowWidth = window.innerWidth;
+    if (windowWidth < 960){
+      app.canvasWidth = windowWidth.toString();
+    } else if (+app.canvasWidth < windowWidth){
+      app.canvasWidth = windowWidth.toString();
+    }
+    if (app.thisChart){
+      app.thisChart.update();
+    }
   },
 
   //update the results of each of the objects in displayedObjects on click
@@ -223,58 +246,27 @@ var app = {
     }
     console.log(app.storageArray);
     app.makeCharts(plotToMake);
-    app.drawForm();
   },
 
+  //draw the plot title
   drawChartLabel: function(){
+    var chartDisplay = document.getElementById('chartDisplay');
     var chartTitleEl = document.createElement('h5');
-    chartTitleEl.className = 'twelve columns';
+    chartTitleEl.className = 'twelve columns chartTitle';
     chartTitleEl.textContent = app.chartTitle;
-    chartDisplay.appendChild(chartTitleEl);
+    chartDisplay.insertBefore(chartTitleEl, chartDisplay.firstChild);
   },
 
-  drawForm: function(){
-    console.log('drawForm called');
+  drawReminderText: function(){
+    console.log('drawReminderText called');
     //build the form
-    var objectForm = document.getElementById('productForm');
-    objectForm.className = 'twelve columns';
-    objectForm.innerHTML = '';
-
-    //build the menu
-    var productSelect = document.createElement('select');
-    productSelect.name = 'productSelect';
-    productSelect.id = 'productSelect';
-
-
-    var selectOption = document.createElement('option');
-    selectOption.value = 'summary';
-    selectOption.textContent = 'summary';
-    productSelect.appendChild(selectOption);
-
-    for (var i = 0; i < app.imageArray.length; i++) {
-      selectOption = document.createElement('option');
-      selectOption.value = app.imageArray[i];
-      selectOption.textContent = app.imageArray[i];
-      productSelect.appendChild(selectOption);
-    }
-
-    objectForm.appendChild(productSelect);
-
-    var submitButton = document.createElement('input');
-    submitButton.type = 'submit';
-    submitButton.value = 'GeneratePlot';
-    objectForm.appendChild(submitButton);
-
-
-    objectForm.addEventListener('submit', function(event){
-      event.preventDefault();
-      console.log('the event target selectForm value is:');
-      console.log(event.target.productSelect.value);
-      console.log('the event is ');
-      console.dir(event);
-      app.getResults(event.target.productSelect.value);
-    })
-
+    var reminderText = document.getElementById('reminderText');
+    reminderText.innerHTML = '';
+    reminderText.className = 'twelve columns';
+    var reminderPara = document.createElement('p');
+    reminderPara.className = 'reminderPara';
+    reminderPara.textContent = "Click a bar to learn more about that product's ranking.";
+    reminderText.appendChild(reminderPara);
   },
 
   //draws the chart onto the page
@@ -283,12 +275,12 @@ var app = {
     chartDisplay.innerHTML = '';
     app.canvas = document.createElement('canvas');
     app.canvas.id = 'dataPlot';
-    app.canvas.width = '960';
+    app.canvas.width = app.canvasWidth;
     app.canvas.height = '300';
     chartDisplay.appendChild(app.canvas);
     app.context = app.canvas.getContext('2d');
-
-    if(!plotToMake || plotToMake === 'summary') {
+    //draw the summary plot
+    if(!plotToMake) {
       app.chartTitle ='Object wins as a percentage of times displayed';
       app.drawChartLabel();
       app.labelYAxis = 'win percent';
@@ -297,7 +289,9 @@ var app = {
       console.dir(app.dataToPlot);
       var mainBarChart = new Chart(app.context).barAlt(app.dataToPlot, app.mainBarGraphOptions);
       app.thisChart = mainBarChart;
+    //draw a plot for an individual object
     } else if (plotToMake){
+      getResults.textContent = 'Back to summary plot';
       console.log(plotToMake)
       app.chartTitle = 'Breakdown of record for ' + plotToMake;
       app.labelYAxis = 'Number of times'
@@ -306,8 +300,21 @@ var app = {
       var productBarChart = new Chart(app.context).barAlt(app.dataToPlot, app.mainBarGraphOptions);
       app.thisChart = productBarChart;
     }
+    //redraw the reminder text at the bottom
+    app.drawReminderText();
+    //readd the even listener to the canvas
+    app.canvas.addEventListener('click', function(e){
+      // console.dir(e);
+      // console.log('canvas event listener');
+      var clickedBar  = app.thisChart.getBarsAtEvent(e)
+      // console.log(clickedBar[0]);
+      // console.log(typeof clickedBar[0]);
+      // console.log(clickedBar[0]['label']);
+      app.getResults(clickedBar[0]['label']);
+    })
   },
 
+  //fixes the stored data so that their win, loss, and tie record don't include a blank entry for matches against themselves
   removeDuplicatesInStorage: function(){
     for (var i = 0; i < app.storageArray.length; i++){
       app.storageArray[i][4].splice(i, 1);
@@ -315,6 +322,7 @@ var app = {
     console.log(app.storageArray);
   },
 
+  //format data for the summary chart
   processDataForMainBarGraph: function (){
     app.removeDuplicatesInStorage();
     var newDataToPlot = {
@@ -331,7 +339,7 @@ var app = {
     app.dataToPlot = newDataToPlot;
   },
 
-  //process the data to make a bar graph for an individual product
+  //format data for an individual object's chart
   processDataForObjectBarGraph(objectToPlot){
     console.log('inside object to plot');
     console.log(objectToPlot);
@@ -376,158 +384,3 @@ var app = {
 
 //set up initial board
 app.initialize();
-
-//event handlers
-optionDisplay.addEventListener('click', app.onClick);
-getResults.addEventListener('click', function(){
-  app.getResults();
-})
-
-//
-// //app object
-// app = {
-//   counter: 0,
-//   allImgObjects: [],
-//   displayedObjects: [],
-//   imageKey: {},
-//   initialize: function(){
-//     app.counter = 0;
-//     app.allImgObjects = [];
-//     app.imageKey = {}; //this contains properties named after the objects that contain the index of each object in allImgObjects
-//     for(var i = 0; i < imageConstructorArray.length; i++){
-//       var newImageObj = new imageChoice(imageConstructorArray[i][0], imageConstructorArray[i][1]);
-//       app.imageKey[newImageObj.name] = i;
-//       for (var key in newImageObj){
-//         if (newImageObj[key] instanceof Array){
-//           for (var j = 0; j < imageConstructorArray.length; j++){
-//             newImageObj[key].push(0);
-//           }
-//         }
-//       }
-//       app.allImgObjects.push(newImageObj);
-//
-//     }
-//     console.log('app.allImgObjects is:');
-//     console.log(app.allImgObjects);
-//     console.log('app.imageKey is:');
-//     console.dir(app.imageKey);
-//     app.redraw();
-//   },
-//
-//   onClick: function(e){
-//     app.counter++;
-//     var chosen = e.target.id;
-//     for (var i = 0; i < app.displayedObjects.length; i++){
-//       if (app.displayedObjects[i].name === chosen){
-//         //up its number of wins
-//         app.displayedObjects[i].winsNo++;
-//         //update the wins number and the loss number
-//         for (var j = 0; j < app.displayedObjects.length; j++){
-//           if (j !== i){
-//             app.displayedObjects[i].wonVs[app.imageKey[app.displayedObjects[j].name]]++;
-//             app.displayedObjects[j].lostTo[app.imageKey[chosen]]++;
-//           }
-//         }
-//       } else {
-//         for (var j = 0; j  < app.displayedObjects.length; j++){
-//           if (j !== i && app.displayedObjects[j].name !== chosen){
-//             app.displayedObjects[i].tiedWith[app.imageKey[app.displayedObjects[j].name]]++;
-//           }
-//         }
-//       }
-//     }
-//     app.redraw();
-//   },
-//
-//   redraw: function(){
-//     app.displayedObjects = [];
-//     optionDisplay.innerHTML = '';
-//     app.displayAll(app.chooseImages());
-//   },
-//
-//   displayAll: function(indicesToChoose){
-//     for (var i = 0; i < indicesToChoose.length; i++){
-//       app.allImgObjects[indicesToChoose[i]].displayedNo++;
-//       app.displayedObjects.push(app.allImgObjects[indicesToChoose[i]])
-//       app.display(app.allImgObjects[indicesToChoose[i]]);
-//     }
-//     console.log('app.displayedObjects is');
-//     console.log(app.displayedObjects);
-//   },
-//
-//   display: function(imageObj){
-//     var optionContainerEl = document.createElement('div');
-//     optionContainerEl.className = 'four columns optionContainer';
-//     optionDisplay.appendChild(optionContainerEl);
-//
-//     var productImage = document.createElement('img');
-//     productImage.className = 'productImage';
-//     productImage.id = imageObj.name;
-//     productImage.src = imageObj.source;
-//     optionContainerEl.appendChild(productImage);
-//
-//     var productName = document.createElement('h3');
-//     productName.className = 'productName';
-//     productName.textContent = imageObj.name;
-//     optionContainerEl.appendChild(productName);
-//
-//   },
-//
-//   chooseImages: function(){
-//     var indicesToChoose = [];
-//     while (indicesToChoose.length < 3){
-//       var indexChoice = Math.floor(Math.random()*app.allImgObjects.length);
-//       if (indicesToChoose.indexOf(indexChoice) === -1) {
-//         indicesToChoose.push(indexChoice);
-//       }
-//     }
-//     return indicesToChoose;
-//   },
-//
-//   processResults: function(){
-//     //sort the objects by most to least wins
-//     app.allImgObjects.sort(function( a, b){
-//       return  b.getWinPercent() - a.getWinPercent();
-//     })
-//     //update the numbers in imageKey
-//     for (var i = 0; i < app.allImgObjects.lenth; i++){
-//       app.imageKey[app.allImgObjects[i].name] = i;
-//     }
-//   },
-//
-//   summarizeResults: function(){
-//     if(app.counter > 14){
-//       for (var i = 0; i < app.allImgObjects.length; i++){
-//         console.log('name ');
-//         console.log(app.allImgObjects[i].name);
-//         console.log(app.allImgObjects[i].getWinPercent());
-//         console.log('displayedNo ');
-//         console.log( app.allImgObjects[i].displayedNo);
-//         console.log('winsNo ');
-//         console.log( app.allImgObjects[i].winsNo);
-//         console.log('wonVs ');
-//         console.log(app.allImgObjects[i].wonVs);
-//         console.log('lostTo ' );
-//         console.log(app.allImgObjects[i].lostTo);
-//         console.log('tiedWith ' );
-//         console.log(app.allImgObjects[i].tiedWith);
-//       }
-//     }
-//   }
-//
-// }
-// //set up
-// app.initialize();
-//
-// //event handlers
-// optionDisplay.addEventListener('click', app.onClick);
-// getResults.addEventListener('click', function(){
-//   app.processResults();
-//   app.summarizeResults();
-// })
-
-
-
-
-
-//add shadows to image before click

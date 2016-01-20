@@ -56,6 +56,7 @@ I want to store the data for my client and return it in a sorted and easily usab
 I want to build cool looking charts that are informative for my client and my users
 I want mouseover events to indicate which item the user is about to select  (alt for images?)
 I want to make the results button differentiate between the first time its clicked and when it's clicked again if new data has been added so it's clear that the dataset has changed
+I want to make it so that when an individual object's summary is shown, an image of that object is also shown
 
 client:
 I want the app to display three products side-by-side to the test-subject    X
@@ -83,3 +84,6 @@ You are also responsible for the look and feel of the app, so don't forget a cus
 stretch goals:
 sort the result list   
 add more statistical analysis, like how many times each was displayed, etc.
+
+
+Notes: used the discussion at http://stackoverflow.com/questions/31913967/how-to-set-chartjs-y-axis-title to figure out how to extend my bar chart to get y axis labels
