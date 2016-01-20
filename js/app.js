@@ -235,38 +235,30 @@ var app = {
 
   drawForm: function(){
     console.log('drawForm broken');
-
     //build the form
-    // var objectForm = document.createElement('form');
-    // objectForm.id = 'objectForm';
-    // chartDisplay.appendChild(objectForm);
-    // //build the menu
-    // var selectOption = document.createElement('input');
-    // selectOption.name = 'selectOption';
-    // selectOption.type = 'radio';
-    // selectOption.value = 'Summary';
-    // objectForm.appendChild('selectOption');
-    //
-    // for (var i = 0; i < app.imageArray.length; i++) {
-    //   selectOption = document.createElement('input');
-    //   selectOption.type = 'radio';
-    //   selectOption.name = 'selectOption';
-    //   selectOption.value = app.imageArray[i];
-    //   objectForm.appendChild('selectOption');
-    // }
-    //
-    // var submitButton = document.createElement('input');
-    // submitButton.type = 'submit';
-    // submitButton.value = 'Generate plot';
-    // objectForm.appendChild(submitButton);
-    //
-    //
-    // objectForm = document.getElementById('objectForm');
-    // objectForm.addEventListener('submit', function(event){
-    //   console.log('the event target selectForm value is:');
-    //   console.log(event.target.selectOption.value);
-    //   app.getResults(event.target.selectOption.value);
-    // })
+    var objectForm = document.getElementById('productForm');
+    objectForm.className = 'twelve columns';
+    //build the menu
+    var selectOption = document.createElement('input');
+    selectOption.name = 'selectOption';
+    selectOption.type = 'radio';
+    selectOption.value = 'Summary';
+    console.log(selectOption);
+    objectForm.appendChild('selectOption');
+
+    for (var i = 0; i < app.imageArray.length; i++) {
+      selectOption = document.createElement('input');
+      selectOption.type = 'radio';
+      selectOption.name = 'selectOption';
+      selectOption.value = app.imageArray[i];
+      objectForm.appendChild('selectOption');
+    }
+
+    objectForm.addEventListener('submit', function(event){
+      console.log('the event target selectForm value is:');
+      console.log(event.target.selectOption.value);
+      app.getResults(event.target.selectOption.value);
+    })
   },
 
   //draws the chart onto the page
@@ -517,3 +509,9 @@ getResults.addEventListener('click', function(){
 //   app.processResults();
 //   app.summarizeResults();
 // })
+
+
+
+
+
+//add shadows to image before click
