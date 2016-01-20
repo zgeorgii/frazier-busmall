@@ -95,6 +95,7 @@ var app = {
   storageArray: [],
   mainBarGraphOptions: {scaleLabel: "<%=value%>"},
   thisChart: '',
+  plotToMake: '',
 
   //builds the initial board state
   initialize: function(){
@@ -105,6 +106,7 @@ var app = {
     optionDisplay.addEventListener('click', app.onClick);
     getResults.addEventListener('click', function(){
       getResults.textContent = 'Get Results';
+      app.plotToMake = '';
       app.getResults();
     })
     window.addEventListener('resize', function(){
@@ -199,7 +201,7 @@ var app = {
     //   app.canvasWidth = windowWidth.toString();
     // }
     if (app.thisChart){
-      app.thisChart.update();
+      app.getResults();
     }
   },
 
@@ -227,7 +229,7 @@ var app = {
   },
 
   //process the results into a usable format
-  getResults: function(plotToMake){
+  getResults: function(){
     //reset storage
     app.storageArray = [];
     //sort app.imageArray by win percent
@@ -265,7 +267,7 @@ var app = {
       app.storageArray.push(thisStorageArrayEntry);
     }
     console.log(app.storageArray);
-    app.makeCharts(plotToMake);
+    app.makeCharts();
   },
 
   //draw the plot title
@@ -277,20 +279,22 @@ var app = {
     chartDisplay.insertBefore(chartTitleEl, chartDisplay.firstChild);
   },
 
-  drawReminderText: function(){
+  drawReminderText: function(indicator){
     console.log('drawReminderText called');
     //build the form
     var reminderText = document.getElementById('reminderText');
     reminderText.innerHTML = '';
     reminderText.className = 'twelve columns';
-    var reminderPara = document.createElement('p');
-    reminderPara.className = 'reminderPara';
-    reminderPara.textContent = "Click a bar to learn more about that product's ranking.";
-    reminderText.appendChild(reminderPara);
+    if (indicator) { //not sure why this works this way
+      var reminderPara = document.createElement('p');
+      reminderPara.className = 'reminderPara';
+      reminderPara.textContent = "Click a bar to learn more about that product's ranking.";
+      reminderText.appendChild(reminderPara);
+    }
   },
 
   //draws the chart onto the page
-  makeCharts: function(plotToMake){
+  makeCharts: function(){
     //build my canvas element
     chartDisplay.innerHTML = '';
     app.canvas = document.createElement('canvas');
@@ -300,7 +304,7 @@ var app = {
     chartDisplay.appendChild(app.canvas);
     app.context = app.canvas.getContext('2d');
     //draw the summary plot
-    if(!plotToMake) {
+    if(!app.plotToMake) {
       app.chartTitle ='Object wins as a percentage of times displayed';
       app.drawChartLabel();
       app.labelYAxis = 'win percent';
@@ -309,19 +313,20 @@ var app = {
       console.dir(app.dataToPlot);
       var mainBarChart = new Chart(app.context).barAlt(app.dataToPlot, app.mainBarGraphOptions);
       app.thisChart = mainBarChart;
+      app.drawReminderText('clear');
     //draw a plot for an individual object
-    } else if (plotToMake){
+  } else if (app.plotToMake){
       getResults.textContent = 'Back to summary plot';
-      console.log(plotToMake)
-      app.chartTitle = 'Breakdown of record for ' + plotToMake;
+      console.log(app.plotToMake)
+      app.chartTitle = 'Breakdown of record for ' + app.plotToMake;
       app.labelYAxis = 'Number of times'
       app.drawChartLabel();
-      app.processDataForObjectBarGraph(plotToMake);
+      app.processDataForObjectBarGraph(app.plotToMake);
       var productBarChart = new Chart(app.context).barAlt(app.dataToPlot, app.mainBarGraphOptions);
       app.thisChart = productBarChart;
+      app.drawReminderText();
     }
-    //redraw the reminder text at the bottom
-    app.drawReminderText();
+
     //readd the even listener to the canvas
     app.canvas.addEventListener('click', function(e){
       // console.dir(e);
@@ -330,7 +335,8 @@ var app = {
       // console.log(clickedBar[0]);
       // console.log(typeof clickedBar[0]);
       // console.log(clickedBar[0]['label']);
-      app.getResults(clickedBar[0]['label']);
+      app.plotToMake = clickedBar[0]['label'];
+      app.getResults();
     })
   },
 
