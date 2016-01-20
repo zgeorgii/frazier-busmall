@@ -1,15 +1,62 @@
+'use strict';
+//Modify the charts.js bar chart to include padding on the left for a y-axis label
+Chart.types.Bar.extend({
+  name: 'barAlt',
+  draw: function(){
+    Chart.types.Bar.prototype.draw.apply(this, arguments);
+        this.scale.xScalePaddingLeft = 75;
+        var ctx = this.chart.ctx;
+        ctx.save();
+        // text alignment and color
+        ctx.textAlign = "center";
+        ctx.textBaseline = "bottom";
+        ctx.fillStyle = this.options.scaleFontColor;
+        // position
+        var x = this.scale.xScalePaddingLeft * 0.4;
+        var y = this.chart.height / 2;
+        // change origin
+        ctx.translate(x, y)
+        // rotate text
+        ctx.rotate(-90 * Math.PI / 180);
+        ctx.fillText(app.labelYAxis, 0, 0);
+        ctx.restore();
+  }
+})
+
+//add a method to be able to get element's widths
+Element.prototype.getElementWidth = function() {
+	   if (typeof this.clip !== "undefined") {
+	      return this.clip.width;
+	   } else {
+	      if (this.style.pixelWidth) {
+	         return this.style.pixelWidth;
+	      } else {
+	         return this.offsetWidth;
+	      }
+	   }
+	};
+
 //initial DOM setup
 var optionDisplay = document.getElementById('optionDisplay');
 var getResults = document.getElementById('getResults');
+var chartDisplay = document.getElementById('chartDisplay');
 
-//initial images array setup
+//initial images array setup, works better with fewer images because of small data
 var imageConstructorArray = [];
 imageConstructorArray[0] = ['bag', 'img/bag.jpg'];
 imageConstructorArray[1] = ['banana', 'img/banana.jpg'];
 imageConstructorArray[2] = ['boots', 'img/boots.jpg'];
-imageConstructorArray[3] = ['cthulhu', 'img/cthulhu.jpg'];
-imageConstructorArray[4] = ['dragon', 'img/dragon.jpg'];
-imageConstructorArray[5] = ['pen', 'img/pen.jpg'];
+imageConstructorArray[3] = ['chair', 'img/chair.jpg'];
+imageConstructorArray[4] = ['cthulhu', 'img/cthulhu.jpg'];
+imageConstructorArray[5] = ['dragon', 'img/dragon.jpg'];
+imageConstructorArray[6] = ['pen', 'img/pen.jpg'];
+// imageConstructorArray[7] = ['scissors', 'img/scissors.jpg'];
+// imageConstructorArray[8] = ['shark', 'img/shark.jpg'];
+// imageConstructorArray[9] = ['sweep', 'img/sweep.jpg'];
+// imageConstructorArray[10] = ['unicorn', 'img/unicorn.jpg'];
+// imageConstructorArray[11] = ['usb', 'img/usb.gif'];
+// imageConstructorArray[12] = ['water-can', 'img/water-can.jpg'];
+// imageConstructorArray[13] = ['wine-glass', 'img/wine-glass.jpg'];
 console.log('image constructor array is:');
 console.table(imageConstructorArray);
 
@@ -31,18 +78,41 @@ function imageChoice(name, source){
 }
 
 
-app = {
+var app = {
   counter: 0,
+  canvasWidth: '960',
+  chartTitle: 'Product selection probability',
+  labelYAxis: '',
+  thisChart: '',
+  canvas: '',
+  context: '',
+  thesholdForResults: 3,
   imageArray: [],
+  dataToPlot: {},
   allImgObjects: {},
   displayedObjects: [],
   imageRecordObjects: ['wonVs', 'lostTo', 'tiedWith'],
   storageArray: [],
+  mainBarGraphOptions: {scaleLabel: "<%=value%>"},
+  thisChart: '',
+  plotToMake: '',
 
   //builds the initial board state
   initialize: function(){
+    //rest stuff
     app.counter = 0;
     app.allImgObjects = {};
+    //event handlers
+    optionDisplay.addEventListener('click', app.onClick);
+    getResults.addEventListener('click', function(){
+      getResults.textContent = 'Get Results';
+      app.plotToMake = '';
+      app.getResults();
+    })
+    window.addEventListener('resize', function(){
+      console.log('resize event');
+      app.onResize();
+    });
     //iterate through and build all the image objects
     for (var i = 0; i < imageConstructorArray.length; i++){
       var newImageObj = new imageChoice(imageConstructorArray[i][0], imageConstructorArray[i][1]);
@@ -59,6 +129,7 @@ app = {
       app.imageArray.push(imageConstructorArray[i][0]);
     }
     //draw the intial state
+    app.onResize();
     app.displayAll();
   },
 
@@ -110,31 +181,48 @@ app = {
   //determines which object was clicked, updates the data, and redraws the board
   onClick: function(event){
     app.counter++;
-    if (app.counter > 3) {
+    if (app.counter > app.thesholdForResults) {
       getResults.className = 'clickableGetResults twelve columns';
     }
-    var chosen = event.target.id;
-    // update the wins number and tiedWith, lostTo, and winVs lists
+    var chosenId = event.target.id;
+    app.updateResults(chosenId);
+    app.redraw();
+  },
+
+  onResize: function(){
+    var containerWidth = document.getElementById('container');
+    containerWidth = containerWidth.getElementWidth();
+    console.log('container width is ' + containerWidth);
+    if (containerWidth < 960){
+      app.canvasWidth = containerWidth.toString();
+      console.log('app.canvasWidth is ' + app.canvasWidth);
+    }
+    if (app.thisChart){
+      app.getResults();
+    }
+  },
+
+  //update the results of each of the objects in displayedObjects on click
+  updateResults(chosenId){
     for (var i = 0; i < app.displayedObjects.length; i++){
-      if (app.displayedObjects[i].name === chosen){
+      if (app.displayedObjects[i].name === chosenId){
         app.displayedObjects[i].winsNo++;
         for (var j = 0; j < app.displayedObjects.length; j++){
           if (j !== i){
             var loserName = app.displayedObjects[j].name;
-            app.allImgObjects[chosen].wonVs[loserName]++;
-            app.allImgObjects[loserName].lostTo[chosen]++;
+            app.allImgObjects[chosenId].wonVs[loserName]++;
+            app.allImgObjects[loserName].lostTo[chosenId]++;
           }
         }
       } else {
         for (var j = 0; j < app.displayedObjects.length; j++){
-          if (j !== i && app.displayedObjects[j].name !== chosen){
-            tiedName = app.displayedObjects[j].name;
+          if (j !== i && app.displayedObjects[j].name !== chosenId){
+            var tiedName = app.displayedObjects[j].name;
             app.displayedObjects[i].tiedWith[tiedName]++;
           }
         }
       }
     }
-    app.redraw();
   },
 
   //process the results into a usable format
@@ -176,6 +264,141 @@ app = {
       app.storageArray.push(thisStorageArrayEntry);
     }
     console.log(app.storageArray);
+    app.makeCharts();
+  },
+
+  //draw the plot title
+  drawChartLabel: function(){
+    var chartDisplay = document.getElementById('chartDisplay');
+    var chartTitleEl = document.createElement('h5');
+    chartTitleEl.className = 'twelve columns chartTitle';
+    chartTitleEl.textContent = app.chartTitle;
+    chartDisplay.insertBefore(chartTitleEl, chartDisplay.firstChild);
+  },
+
+  drawReminderText: function(indicator){
+    console.log('drawReminderText called');
+    //build the form
+    var reminderText = document.getElementById('reminderText');
+    reminderText.innerHTML = '';
+    reminderText.className = 'twelve columns';
+    if (indicator) { //not sure why this works this way
+      var reminderPara = document.createElement('p');
+      reminderPara.className = 'reminderPara';
+      reminderPara.textContent = "Click a bar to learn more about that product's ranking.";
+      reminderText.appendChild(reminderPara);
+    }
+  },
+
+  //draws the chart onto the page
+  makeCharts: function(){
+    //build my canvas element
+    chartDisplay.innerHTML = '';
+    app.canvas = document.createElement('canvas');
+    app.canvas.id = 'dataPlot';
+    app.canvas.width = app.canvasWidth;
+    app.canvas.height = '300';
+    chartDisplay.appendChild(app.canvas);
+    app.context = app.canvas.getContext('2d');
+    //draw the summary plot
+    if(!app.plotToMake) {
+      app.chartTitle ='Product selection probability';
+      app.drawChartLabel();
+      app.labelYAxis = 'selection probability';
+      //process the data and build the chart
+      app.processDataForMainBarGraph();
+      console.dir(app.dataToPlot);
+      var mainBarChart = new Chart(app.context).barAlt(app.dataToPlot, app.mainBarGraphOptions);
+      app.thisChart = mainBarChart;
+      app.drawReminderText('clear');
+    //draw a plot for an individual object
+  } else if (app.plotToMake){
+      getResults.textContent = 'Back to summary plot';
+      console.log(app.plotToMake)
+      app.chartTitle = 'Breakdown of record for ' + app.plotToMake;
+      app.labelYAxis = 'Number of times'
+      app.drawChartLabel();
+      app.processDataForObjectBarGraph(app.plotToMake);
+      var productBarChart = new Chart(app.context).barAlt(app.dataToPlot, app.mainBarGraphOptions);
+      app.thisChart = productBarChart;
+      app.drawReminderText();
+    }
+
+    //readd the even listener to the canvas
+    app.canvas.addEventListener('click', function(e){
+      // console.dir(e);
+      // console.log('canvas event listener');
+      var clickedBar  = app.thisChart.getBarsAtEvent(e)
+      // console.log(clickedBar[0]);
+      // console.log(typeof clickedBar[0]);
+      // console.log(clickedBar[0]['label']);
+      app.plotToMake = clickedBar[0]['label'];
+      app.getResults();
+    })
+  },
+
+  //fixes the stored data so that their win, loss, and tie record don't include a blank entry for matches against themselves
+  removeDuplicatesInStorage: function(){
+    for (var i = 0; i < app.storageArray.length; i++){
+      app.storageArray[i][4].splice(i, 1);
+    }
+    console.log(app.storageArray);
+  },
+
+  //format data for the summary chart
+  processDataForMainBarGraph: function (){
+    app.removeDuplicatesInStorage();
+    var newDataToPlot = {
+      labels: [],
+      datasets: []
+    }
+    var barChartPercentWins = [];
+    for (var i = 0; i < app.storageArray.length; i++){
+      newDataToPlot.labels.push(app.storageArray[i][0]);
+      barChartPercentWins.push(+(app.storageArray[i][1]).toFixed(3));
+    }
+    var mainBarChartDataSet = new app.barChartDataSet(['Win percent', 'rgba(220,220,220,0.5)', 'rgba(220,220,220,0.8)', 'rgba(220,220,220,0.75)', 'rgba(220,220,220,1)', barChartPercentWins]);
+    newDataToPlot.datasets.push(mainBarChartDataSet);
+    app.dataToPlot = newDataToPlot;
+  },
+
+  //format data for an individual object's chart
+  processDataForObjectBarGraph(objectToPlot){
+    console.log('inside object to plot');
+    console.log(objectToPlot);
+    app.removeDuplicatesInStorage();
+    var newDataToPlot = {
+      labels: [],
+      datasets: []
+    }
+    var wins = [];
+    var losses =[];
+    var ties = [];
+    for ( var i = 0; i < app.imageArray.length; i++){
+      if (app.storageArray[i][0]  === objectToPlot){
+        var thisRecordList = app.storageArray[i];
+      }
+    }
+    var thisRecordList = thisRecordList[4];
+    for (var i = 0; i < thisRecordList.length; i++){
+      newDataToPlot['labels'].push(thisRecordList[i][0]);
+      wins.push(thisRecordList[i][1]);
+      losses.push(thisRecordList[i][2]);
+      ties.push(thisRecordList[i][3]);
+    }
+    newDataToPlot.datasets.push(new app.barChartDataSet(['wins', 'rgba(0,220, 0, .5)', 'rgba(0,220, 0, .5)', 'rgba(0,220, 0, .5)', 'rgba(0,220, 0, .5)', wins]));
+    newDataToPlot.datasets.push(new app.barChartDataSet(['losses', 'rgba(220,0, 0, .5)', 'rgba(220,0, 0, .5)', 'rgba(220,0, 0, .5)', 'rgba(220,0, 0, .5)', losses]));
+    newDataToPlot.datasets.push(new app.barChartDataSet(['wins', 'rgba(0,0, 220, .5)', 'rgba(0,0, 220, .5)', 'rgba(0,0, 220, .5)', 'rgba(0,0, 220, .5)', ties]));
+    app.dataToPlot = newDataToPlot;
+  },
+
+  barChartDataSet: function(arrayInput) {
+    this.label = arrayInput[0];
+    this.fillColor = arrayInput[1];
+    this.strokeColor = arrayInput[2];
+    this.highlightFill = arrayInput[3];
+    this.highlightStroke = arrayInput[4];
+    this.data = arrayInput[5];
   }
 
 }
@@ -184,152 +407,3 @@ app = {
 
 //set up initial board
 app.initialize();
-
-//event handlers
-optionDisplay.addEventListener('click', app.onClick);
-getResults.addEventListener('click', function(){
-  app.getResults();
-})
-
-//
-// //app object
-// app = {
-//   counter: 0,
-//   allImgObjects: [],
-//   displayedObjects: [],
-//   imageKey: {},
-//   initialize: function(){
-//     app.counter = 0;
-//     app.allImgObjects = [];
-//     app.imageKey = {}; //this contains properties named after the objects that contain the index of each object in allImgObjects
-//     for(var i = 0; i < imageConstructorArray.length; i++){
-//       var newImageObj = new imageChoice(imageConstructorArray[i][0], imageConstructorArray[i][1]);
-//       app.imageKey[newImageObj.name] = i;
-//       for (var key in newImageObj){
-//         if (newImageObj[key] instanceof Array){
-//           for (var j = 0; j < imageConstructorArray.length; j++){
-//             newImageObj[key].push(0);
-//           }
-//         }
-//       }
-//       app.allImgObjects.push(newImageObj);
-//
-//     }
-//     console.log('app.allImgObjects is:');
-//     console.log(app.allImgObjects);
-//     console.log('app.imageKey is:');
-//     console.dir(app.imageKey);
-//     app.redraw();
-//   },
-//
-//   onClick: function(e){
-//     app.counter++;
-//     var chosen = e.target.id;
-//     for (var i = 0; i < app.displayedObjects.length; i++){
-//       if (app.displayedObjects[i].name === chosen){
-//         //up its number of wins
-//         app.displayedObjects[i].winsNo++;
-//         //update the wins number and the loss number
-//         for (var j = 0; j < app.displayedObjects.length; j++){
-//           if (j !== i){
-//             app.displayedObjects[i].wonVs[app.imageKey[app.displayedObjects[j].name]]++;
-//             app.displayedObjects[j].lostTo[app.imageKey[chosen]]++;
-//           }
-//         }
-//       } else {
-//         for (var j = 0; j  < app.displayedObjects.length; j++){
-//           if (j !== i && app.displayedObjects[j].name !== chosen){
-//             app.displayedObjects[i].tiedWith[app.imageKey[app.displayedObjects[j].name]]++;
-//           }
-//         }
-//       }
-//     }
-//     app.redraw();
-//   },
-//
-//   redraw: function(){
-//     app.displayedObjects = [];
-//     optionDisplay.innerHTML = '';
-//     app.displayAll(app.chooseImages());
-//   },
-//
-//   displayAll: function(indicesToChoose){
-//     for (var i = 0; i < indicesToChoose.length; i++){
-//       app.allImgObjects[indicesToChoose[i]].displayedNo++;
-//       app.displayedObjects.push(app.allImgObjects[indicesToChoose[i]])
-//       app.display(app.allImgObjects[indicesToChoose[i]]);
-//     }
-//     console.log('app.displayedObjects is');
-//     console.log(app.displayedObjects);
-//   },
-//
-//   display: function(imageObj){
-//     var optionContainerEl = document.createElement('div');
-//     optionContainerEl.className = 'four columns optionContainer';
-//     optionDisplay.appendChild(optionContainerEl);
-//
-//     var productImage = document.createElement('img');
-//     productImage.className = 'productImage';
-//     productImage.id = imageObj.name;
-//     productImage.src = imageObj.source;
-//     optionContainerEl.appendChild(productImage);
-//
-//     var productName = document.createElement('h3');
-//     productName.className = 'productName';
-//     productName.textContent = imageObj.name;
-//     optionContainerEl.appendChild(productName);
-//
-//   },
-//
-//   chooseImages: function(){
-//     var indicesToChoose = [];
-//     while (indicesToChoose.length < 3){
-//       var indexChoice = Math.floor(Math.random()*app.allImgObjects.length);
-//       if (indicesToChoose.indexOf(indexChoice) === -1) {
-//         indicesToChoose.push(indexChoice);
-//       }
-//     }
-//     return indicesToChoose;
-//   },
-//
-//   processResults: function(){
-//     //sort the objects by most to least wins
-//     app.allImgObjects.sort(function( a, b){
-//       return  b.getWinPercent() - a.getWinPercent();
-//     })
-//     //update the numbers in imageKey
-//     for (var i = 0; i < app.allImgObjects.lenth; i++){
-//       app.imageKey[app.allImgObjects[i].name] = i;
-//     }
-//   },
-//
-//   summarizeResults: function(){
-//     if(app.counter > 14){
-//       for (var i = 0; i < app.allImgObjects.length; i++){
-//         console.log('name ');
-//         console.log(app.allImgObjects[i].name);
-//         console.log(app.allImgObjects[i].getWinPercent());
-//         console.log('displayedNo ');
-//         console.log( app.allImgObjects[i].displayedNo);
-//         console.log('winsNo ');
-//         console.log( app.allImgObjects[i].winsNo);
-//         console.log('wonVs ');
-//         console.log(app.allImgObjects[i].wonVs);
-//         console.log('lostTo ' );
-//         console.log(app.allImgObjects[i].lostTo);
-//         console.log('tiedWith ' );
-//         console.log(app.allImgObjects[i].tiedWith);
-//       }
-//     }
-//   }
-//
-// }
-// //set up
-// app.initialize();
-//
-// //event handlers
-// optionDisplay.addEventListener('click', app.onClick);
-// getResults.addEventListener('click', function(){
-//   app.processResults();
-//   app.summarizeResults();
-// })

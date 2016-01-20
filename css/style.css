@@ -8,6 +8,8 @@ body {
 
 .header {
   text-align: center;
+  background-color: #A7A37E;
+  color: #002F2F;
 }
 
 .getResults {
@@ -19,20 +21,45 @@ body {
   width: 100%;
 }
 
+.reminderPara {
+  text-align: center;
+}
+
 .optionContainer {
   border: 1px black solid;
-  background-color: #A7A37E;
+  background-color: #046380;
+  color: white;
+}
+
+.container {
+  /*background-color: #002F2F;*/
+}
+
+.optionContainer:hover {
+  box-shadow: 10px 10px 10px 10px grey;
+}
+
+.chartTitle {
+  text-align: center;
 }
 
 .productName {
   text-align: center;
 }
 
-.getResults {
+.hidden {
   display: none;
+}
+
+.not-shown {
+  visibility: hidden;
 }
 
 .clickableGetResults {
   background-color: #046380;
   color: #EFECCA;
+}
+
+canvas {
+  border: 1px black solid;
 }

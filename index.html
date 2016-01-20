@@ -6,10 +6,10 @@
     <link rel="stylesheet" href="css/style.css" type="text/css"/>
     <link rel="stylesheet" href="css/skeleton.css" type="text/css"/>
     <link rel="stylesheet" href="css/normalize.css" type="text/css"/>
-    <script type="text/javascript" src=""></script>
+    <script type="text/javascript" src="js/Chart.min.js"></script>
   </head>
   <body>
-    <div class="container">
+    <div class="container" id="container">
 
       <header class="header">
         <h1>Which would you be most likely to buy?</h1>
@@ -19,18 +19,22 @@
       <main>
         <div class="optionDisplay row" id="optionDisplay"></div>
 
+        <br>
+
         <div class="row" >
 
           <div class="row">
-            <button id="getResults" class="getResults twelve columns">Get Results</button>
+            <button id="getResults" class="hidden twelve columns">Get Results</button>
           </div>
+
+          <br>
 
           <div class="chartDisplay row" id="chartDisplay"></div>
 
+          <div id="reminderText" class="twelve columns hidden"></div>
+
         </div>
       </main>
-
-      <footer></footer>
 
     </div>
 
