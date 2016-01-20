@@ -81,7 +81,7 @@ function imageChoice(name, source){
 var app = {
   counter: 0,
   canvasWidth: '960',
-  chartTitle: 'Object wins as a percentage of times displayed',
+  chartTitle: 'Product selection probability',
   labelYAxis: '',
   thisChart: '',
   canvas: '',
@@ -302,9 +302,9 @@ var app = {
     app.context = app.canvas.getContext('2d');
     //draw the summary plot
     if(!app.plotToMake) {
-      app.chartTitle ='Object wins as a percentage of times displayed';
+      app.chartTitle ='Product selection probability';
       app.drawChartLabel();
-      app.labelYAxis = 'win percent';
+      app.labelYAxis = 'selection probability';
       //process the data and build the chart
       app.processDataForMainBarGraph();
       console.dir(app.dataToPlot);
