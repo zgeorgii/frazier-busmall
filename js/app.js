@@ -41,7 +41,7 @@ var optionDisplay = document.getElementById('optionDisplay');
 var getResults = document.getElementById('getResults');
 var chartDisplay = document.getElementById('chartDisplay');
 
-//initial images array setup
+//initial images array setup, works better with fewer images because of small data
 var imageConstructorArray = [];
 imageConstructorArray[0] = ['bag', 'img/bag.jpg'];
 imageConstructorArray[1] = ['banana', 'img/banana.jpg'];
@@ -197,9 +197,6 @@ var app = {
       app.canvasWidth = containerWidth.toString();
       console.log('app.canvasWidth is ' + app.canvasWidth);
     }
-    // } else if (+app.canvasWidth < windowWidth){
-    //   app.canvasWidth = windowWidth.toString();
-    // }
     if (app.thisChart){
       app.getResults();
     }

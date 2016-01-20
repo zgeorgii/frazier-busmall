@@ -5,9 +5,23 @@ Codefellows 201 week 3 project
 This is an app that can be distributed to focus groups to determine which products should be included in a catalog.
 
 
-------------------------------------design------------------------------------
+------------------------------------Acknowledgements------------------------------------
+
+
+I got the versions of the images I'm using from David Heyduck
+
+used the discussion at http://stackoverflow.com/questions/31913967/how-to-set-chartjs-y-axis-title to figure out how to extend my bar chart to get y axis labels
+
+using getElementWidth from here: http://www.cjboco.com/blog.cfm/post/determining-an-elements-width-and-height-using-javascript/
+
+
+------------------------------------Architecture------------------------------------
 Initial DOM setup:
   grab all the things we'll be writing into
+
+bar graph extension--allow for y axis labels
+
+getElementWidth function--makes it possible to query an element's width
 
 Product constructor imageChoice (name, source):
   name -- string -- name
@@ -31,8 +45,12 @@ app object:
   display method -- function that displays the objects to click -- redraw, calls displayAll and display
   click method --function that runs on click -- onClick
   displayed object array -- array of the three objects shown on screen -- displayedObjects
-  data display function -- function to draw charts when results button clicked -- doesn't exist yet
+  data display function -- function to draw charts when results button clicked -- getResults, calls makeCharts, drawChartLabel, drawReminderText, removeDuplicatesInStorage, processDataForMainBarGraph, processDataForObjectBarGraph
   counter -- number of times an object has been clicked -- counter
+  resize -- changes the size of the canvas when window size changed -- onResize
+
+
+
   storage retrieval -- get results out of local storage -- doesn't exist yet
   storage method-- puts results into local storage --doesn't exist yet
 
@@ -43,8 +61,8 @@ event listener for results button
 ------------------------------------user stories------------------------------------
 test-subject:
 I want to be able to easily interact with the app so that I can choose things quickly      X
-I want to be able to view the data in a simple, easily-understood way      
-I want to have the option to look at the total data      
+I want to be able to view the data in a simple, easily-understood way      X
+I want to have the option to look at the total data   X    
 
 developer:
 I want to build a responsive app so that the app functions similarly regardless of the screen resolution     X
@@ -53,9 +71,9 @@ I want my data to persist past a page refresh using local storage
 I want to use skeleton to handle the bulk of the formatting and css issues      X
 I want to be able to handle multiple image types for my product displays      
 I want to store the data for my client and return it in a sorted and easily usable format   X
-I want to build cool looking charts that are informative for my client and my users
-I want mouseover events to indicate which item the user is about to select  (alt for images?)
-I want to make the results button differentiate between the first time its clicked and when it's clicked again if new data has been added so it's clear that the dataset has changed
+I want to build cool looking charts that are informative for my client and my users   X
+I want mouseover events to indicate which item the user is about to select   X
+I want to make the results button differentiate between the first time its clicked and when it's clicked again if new data has been added so it's clear that the dataset has changed X but not sure why
 I want to make it so that when an individual object's summary is shown, an image of that object is also shown
 
 client:
@@ -63,7 +81,7 @@ I want the app to display three products side-by-side to the test-subject    X
 I want the subject to be able to choose which of the products they would be most likely to purchase   X
 I want to collect the data from multiple users for analysis     
 I want to the app to collect data in a fair way so that the data is usable    X
-I want to allow the user to view to collected data in a visually appealing way     
+I want to allow the user to view to collected data in a visually appealing way    X
 I only want to allow the user to view the data after they have made 15 total selections         X
 I want to be able to understand how each choice was ranked in the context of what it was ranked against   X
 I want to ask the user how much they would be willing to pay for it --Heyduck idea
@@ -84,8 +102,3 @@ You are also responsible for the look and feel of the app, so don't forget a cus
 stretch goals:
 sort the result list   
 add more statistical analysis, like how many times each was displayed, etc.
-
-
-Notes: used the discussion at http://stackoverflow.com/questions/31913967/how-to-set-chartjs-y-axis-title to figure out how to extend my bar chart to get y axis labels
-
-using getElementWidth from here: http://www.cjboco.com/blog.cfm/post/determining-an-elements-width-and-height-using-javascript/

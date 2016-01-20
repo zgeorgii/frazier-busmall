@@ -8,12 +8,9 @@ body {
 
 .header {
   text-align: center;
+  background-color: #A7A37E;
+  color: #002F2F;
 }
-
-/*#dataPlot {
-  width: 100% !important;
-  margin-left: 0;
-}*/
 
 .getResults {
   align: center;
@@ -30,7 +27,12 @@ body {
 
 .optionContainer {
   border: 1px black solid;
-  background-color: #A7A37E;
+  background-color: #046380;
+  color: white;
+}
+
+.container {
+  /*background-color: #002F2F;*/
 }
 
 .optionContainer:hover {
