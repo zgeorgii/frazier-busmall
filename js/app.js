@@ -1,10 +1,10 @@
 'use strict';
-//Modify the charts.js bar chart
+//Modify the charts.js bar chart to include padding on the left for a y-axis label
 Chart.types.Bar.extend({
   name: 'barAlt',
   draw: function(){
     Chart.types.Bar.prototype.draw.apply(this, arguments);
-        this.scale.xScalePaddingLeft = 50;
+        this.scale.xScalePaddingLeft = 75;
         var ctx = this.chart.ctx;
         ctx.save();
         // text alignment and color
@@ -18,7 +18,7 @@ Chart.types.Bar.extend({
         ctx.translate(x, y)
         // rotate text
         ctx.rotate(-90 * Math.PI / 180);
-        ctx.fillText(this.datasets[0].label, 0, 0);
+        ctx.fillText(app.labelYAxis, 0, 0);
         ctx.restore();
   }
 })
@@ -37,15 +37,13 @@ imageConstructorArray[3] = ['chair', 'img/chair.jpg'];
 imageConstructorArray[4] = ['cthulhu', 'img/cthulhu.jpg'];
 imageConstructorArray[5] = ['dragon', 'img/dragon.jpg'];
 imageConstructorArray[6] = ['pen', 'img/pen.jpg'];
-imageConstructorArray[7] = ['scissors', 'img/scissors.jpg'];
-imageConstructorArray[8] = ['shark', 'img/shark.jpg'];
-imageConstructorArray[9] = ['sweep', 'img/sweep.jpg'];
-imageConstructorArray[10] = ['unicorn', 'img/unicorn.jpg'];
-imageConstructorArray[11] = ['usb', 'img/usb.gif'];
-imageConstructorArray[12] = ['water-can', 'img/water-can.jpg'];
-imageConstructorArray[13] = ['wine-glass', 'img/wine-glass.jpg'];
-
-
+// imageConstructorArray[7] = ['scissors', 'img/scissors.jpg'];
+// imageConstructorArray[8] = ['shark', 'img/shark.jpg'];
+// imageConstructorArray[9] = ['sweep', 'img/sweep.jpg'];
+// imageConstructorArray[10] = ['unicorn', 'img/unicorn.jpg'];
+// imageConstructorArray[11] = ['usb', 'img/usb.gif'];
+// imageConstructorArray[12] = ['water-can', 'img/water-can.jpg'];
+// imageConstructorArray[13] = ['wine-glass', 'img/wine-glass.jpg'];
 console.log('image constructor array is:');
 console.table(imageConstructorArray);
 
@@ -69,6 +67,9 @@ function imageChoice(name, source){
 
 var app = {
   counter: 0,
+  chartTitle: 'Object wins as a percentage of times displayed',
+  labelYAxis: '',
+  thisChart: '',
   canvas: '',
   context: '',
   thesholdForResults: 3,
@@ -183,7 +184,7 @@ var app = {
   },
 
   //process the results into a usable format
-  getResults: function(){
+  getResults: function(plotToMake){
     //reset storage
     app.storageArray = [];
     //sort app.imageArray by win percent
@@ -221,23 +222,82 @@ var app = {
       app.storageArray.push(thisStorageArrayEntry);
     }
     console.log(app.storageArray);
-    app.makeCharts();
+    app.makeCharts(plotToMake);
+    app.drawForm();
+  },
+
+  drawChartLabel: function(){
+    var chartTitleEl = document.createElement('h5');
+    chartTitleEl.className = 'twelve columns';
+    chartTitleEl.textContent = app.chartTitle;
+    chartDisplay.appendChild(chartTitleEl);
+  },
+
+  drawForm: function(){
+    console.log('drawForm broken');
+
+    //build the form
+    // var objectForm = document.createElement('form');
+    // objectForm.id = 'objectForm';
+    // chartDisplay.appendChild(objectForm);
+    // //build the menu
+    // var selectOption = document.createElement('input');
+    // selectOption.name = 'selectOption';
+    // selectOption.type = 'radio';
+    // selectOption.value = 'Summary';
+    // objectForm.appendChild('selectOption');
+    //
+    // for (var i = 0; i < app.imageArray.length; i++) {
+    //   selectOption = document.createElement('input');
+    //   selectOption.type = 'radio';
+    //   selectOption.name = 'selectOption';
+    //   selectOption.value = app.imageArray[i];
+    //   objectForm.appendChild('selectOption');
+    // }
+    //
+    // var submitButton = document.createElement('input');
+    // submitButton.type = 'submit';
+    // submitButton.value = 'Generate plot';
+    // objectForm.appendChild(submitButton);
+    //
+    //
+    // objectForm = document.getElementById('objectForm');
+    // objectForm.addEventListener('submit', function(event){
+    //   console.log('the event target selectForm value is:');
+    //   console.log(event.target.selectOption.value);
+    //   app.getResults(event.target.selectOption.value);
+    // })
   },
 
   //draws the chart onto the page
-  makeCharts: function(){
+  makeCharts: function(plotToMake){
     //build my canvas element
     chartDisplay.innerHTML = '';
     app.canvas = document.createElement('canvas');
     app.canvas.id = 'dataPlot';
     app.canvas.width = '960';
+    app.canvas.height = '300';
     chartDisplay.appendChild(app.canvas);
     app.context = app.canvas.getContext('2d');
 
-    //process the data and build the chart
-    app.processDataForMainBarGraph();
-    console.dir(app.dataToPlot);
-    var mainBarChart = new Chart(app.context).barAlt(app.dataToPlot, app.mainBarGraphOptions);
+    if(!plotToMake || plotToMake === 'Summary') {
+      app.chartTitle ='Object wins as a percentage of times displayed';
+      app.drawChartLabel();
+      app.labelYAxis = 'win percent';
+      //process the data and build the chart
+      app.processDataForMainBarGraph();
+      console.dir(app.dataToPlot);
+      var mainBarChart = new Chart(app.context).barAlt(app.dataToPlot, app.mainBarGraphOptions);
+      app.thisChart = mainBarChart;
+    } else if (plotToMake){
+      console.log(plotToMake)
+      app.chartTitle = 'Breakdown of record for ' + plotToMake;
+      app.labelYAxis = 'Number of times'
+      app.drawChartLabel();
+      app.processDataForObjectBarGraph(plotToMake);
+      var productBarChart = new Chart(app.context).barAlt(app.dataToPlot, app.mainBarGraphOptions);
+      app.thisChart = productBarChart;
+    }
   },
 
   removeDuplicatesInStorage: function(){
@@ -260,6 +320,36 @@ var app = {
     }
     var mainBarChartDataSet = new app.barChartDataSet(['Win percent', 'rgba(220,220,220,0.5)', 'rgba(220,220,220,0.8)', 'rgba(220,220,220,0.75)', 'rgba(220,220,220,1)', barChartPercentWins]);
     newDataToPlot.datasets.push(mainBarChartDataSet);
+    app.dataToPlot = newDataToPlot;
+  },
+
+  //process the data to make a bar graph for an individual product
+  processDataForObjectBarGraph(objectToPlot){
+    console.log('inside object to plot');
+    console.log(objectToPlot);
+    app.removeDuplicatesInStorage();
+    var newDataToPlot = {
+      labels: [],
+      datasets: []
+    }
+    var wins = [];
+    var losses =[];
+    var ties = [];
+    for ( var i = 0; i < app.imageArray.length; i++){
+      if (app.storageArray[i][0]  === objectToPlot){
+        var thisRecordList = app.storageArray[i];
+      }
+    }
+    var thisRecordList = thisRecordList[4];
+    for (var i = 0; i < thisRecordList.length; i++){
+      newDataToPlot['labels'].push(thisRecordList[i][0]);
+      wins.push(thisRecordList[i][1]);
+      losses.push(thisRecordList[i][2]);
+      ties.push(thisRecordList[i][3]);
+    }
+    newDataToPlot.datasets.push(new app.barChartDataSet(['wins', 'rgba(0,220, 0, .5)', 'rgba(0,220, 0, .5)', 'rgba(0,220, 0, .5)', 'rgba(0,220, 0, .5)', wins]));
+    newDataToPlot.datasets.push(new app.barChartDataSet(['losses', 'rgba(220,0, 0, .5)', 'rgba(220,0, 0, .5)', 'rgba(220,0, 0, .5)', 'rgba(220,0, 0, .5)', losses]));
+    newDataToPlot.datasets.push(new app.barChartDataSet(['wins', 'rgba(0,0, 220, .5)', 'rgba(0,0, 220, .5)', 'rgba(0,0, 220, .5)', 'rgba(0,0, 220, .5)', ties]));
     app.dataToPlot = newDataToPlot;
   },
 
