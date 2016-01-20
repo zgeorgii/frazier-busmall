@@ -23,6 +23,19 @@ Chart.types.Bar.extend({
   }
 })
 
+//add a method to be able to get element's widths
+Element.prototype.getElementWidth = function() {
+	   if (typeof this.clip !== "undefined") {
+	      return this.clip.width;
+	   } else {
+	      if (this.style.pixelWidth) {
+	         return this.style.pixelWidth;
+	      } else {
+	         return this.offsetWidth;
+	      }
+	   }
+	};
+
 //initial DOM setup
 var optionDisplay = document.getElementById('optionDisplay');
 var getResults = document.getElementById('getResults');
@@ -94,7 +107,10 @@ var app = {
       getResults.textContent = 'Get Results';
       app.getResults();
     })
-    window.addEventListener('resize', app.onResize);
+    window.addEventListener('resize', function(){
+      console.log('resize event');
+      app.onResize();
+    });
     //iterate through and build all the image objects
     for (var i = 0; i < imageConstructorArray.length; i++){
       var newImageObj = new imageChoice(imageConstructorArray[i][0], imageConstructorArray[i][1]);
@@ -172,12 +188,16 @@ var app = {
   },
 
   onResize: function(){
-    var windowWidth = window.innerWidth;
-    if (windowWidth < 960){
-      app.canvasWidth = windowWidth.toString();
-    } else if (+app.canvasWidth < windowWidth){
-      app.canvasWidth = windowWidth.toString();
+    var containerWidth = document.getElementById('container');
+    containerWidth = containerWidth.getElementWidth();
+    console.log('container width is ' + containerWidth);
+    if (containerWidth < 960){
+      app.canvasWidth = containerWidth.toString();
+      console.log('app.canvasWidth is ' + app.canvasWidth);
     }
+    // } else if (+app.canvasWidth < windowWidth){
+    //   app.canvasWidth = windowWidth.toString();
+    // }
     if (app.thisChart){
       app.thisChart.update();
     }

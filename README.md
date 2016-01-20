@@ -87,3 +87,5 @@ add more statistical analysis, like how many times each was displayed, etc.
 
 
 Notes: used the discussion at http://stackoverflow.com/questions/31913967/how-to-set-chartjs-y-axis-title to figure out how to extend my bar chart to get y axis labels
+
+using getElementWidth from here: http://www.cjboco.com/blog.cfm/post/determining-an-elements-width-and-height-using-javascript/
