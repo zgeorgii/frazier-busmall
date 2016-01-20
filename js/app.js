@@ -234,31 +234,47 @@ var app = {
   },
 
   drawForm: function(){
-    console.log('drawForm broken');
+    console.log('drawForm called');
     //build the form
     var objectForm = document.getElementById('productForm');
     objectForm.className = 'twelve columns';
+    objectForm.innerHTML = '';
+
     //build the menu
-    var selectOption = document.createElement('input');
-    selectOption.name = 'selectOption';
-    selectOption.type = 'radio';
-    selectOption.value = 'Summary';
-    console.log(selectOption);
-    objectForm.appendChild('selectOption');
+    var productSelect = document.createElement('select');
+    productSelect.name = 'productSelect';
+    productSelect.id = 'productSelect';
+
+
+    var selectOption = document.createElement('option');
+    selectOption.value = 'summary';
+    selectOption.textContent = 'summary';
+    productSelect.appendChild(selectOption);
 
     for (var i = 0; i < app.imageArray.length; i++) {
-      selectOption = document.createElement('input');
-      selectOption.type = 'radio';
-      selectOption.name = 'selectOption';
+      selectOption = document.createElement('option');
       selectOption.value = app.imageArray[i];
-      objectForm.appendChild('selectOption');
+      selectOption.textContent = app.imageArray[i];
+      productSelect.appendChild(selectOption);
     }
 
+    objectForm.appendChild(productSelect);
+
+    var submitButton = document.createElement('input');
+    submitButton.type = 'submit';
+    submitButton.value = 'GeneratePlot';
+    objectForm.appendChild(submitButton);
+
+
     objectForm.addEventListener('submit', function(event){
+      event.preventDefault();
       console.log('the event target selectForm value is:');
-      console.log(event.target.selectOption.value);
-      app.getResults(event.target.selectOption.value);
+      console.log(event.target.productSelect.value);
+      console.log('the event is ');
+      console.dir(event);
+      app.getResults(event.target.productSelect.value);
     })
+
   },
 
   //draws the chart onto the page
@@ -272,7 +288,7 @@ var app = {
     chartDisplay.appendChild(app.canvas);
     app.context = app.canvas.getContext('2d');
 
-    if(!plotToMake || plotToMake === 'Summary') {
+    if(!plotToMake || plotToMake === 'summary') {
       app.chartTitle ='Object wins as a percentage of times displayed';
       app.drawChartLabel();
       app.labelYAxis = 'win percent';
