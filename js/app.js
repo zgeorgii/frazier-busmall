@@ -1,10 +1,10 @@
 'use strict';
 //Modify the charts.js bar chart to include padding on the left for a y-axis label
 Chart.types.Bar.extend({
-  name: 'barAlt',
+  name: 'barAlt', //instead of calling Charts(context).Bar(data), call Charts(context).barAlt(data)
   draw: function(){
     Chart.types.Bar.prototype.draw.apply(this, arguments);
-    this.scale.xScalePaddingLeft = 75;
+    this.scale.xScalePaddingLeft = 75; //write some number to make room for y axis label
     var ctx = this.chart.ctx;
     ctx.save();
     // text alignment and color
@@ -18,7 +18,7 @@ Chart.types.Bar.extend({
     ctx.translate(x, y);
     // rotate text
     ctx.rotate(-90 * Math.PI / 180);
-    ctx.fillText(app.labelYAxis, 0, 0);
+    ctx.fillText(app.labelYAxis, 0, 0); //change app.labelYAxis to your text or variable name
     ctx.restore();
   }
 });
@@ -402,8 +402,6 @@ var app = {
   }
 
 };
-
-
 
 //set up initial board
 app.initialize();

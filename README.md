@@ -14,6 +14,8 @@ used the discussion at http://stackoverflow.com/questions/31913967/how-to-set-ch
 
 using getElementWidth from here: http://www.cjboco.com/blog.cfm/post/determining-an-elements-width-and-height-using-javascript/
 
+I used the debounce function from:
+https://john-dugan.com/javascript-debounce/
 
 ------------------------------------Architecture------------------------------------
 Initial DOM setup:
