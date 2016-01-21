@@ -357,7 +357,7 @@ var app = {
       newDataToPlot.labels.push(app.storageArray[i][0]);
       barChartPercentWins.push(+(app.storageArray[i][1]).toFixed(3));
     }
-    var mainBarChartDataSet = new app.barChartDataSet(['Win percent', 'rgba(220,220,220,0.5)', 'rgba(220,220,220,0.8)', 'rgba(220,220,220,0.75)', 'rgba(220,220,220,1)', barChartPercentWins]);
+    var mainBarChartDataSet = new app.barChartDataSet(['Win percent', 'rgba(150,150,150,0.5)', 'rgba(150,150,150,0.8)', 'rgba(150,150,150,0.75)', 'rgba(150,150,150,1)', barChartPercentWins]);
     newDataToPlot.datasets.push(mainBarChartDataSet);
     app.dataToPlot = newDataToPlot;
   },
