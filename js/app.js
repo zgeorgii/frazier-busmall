@@ -96,6 +96,19 @@ var app = {
   mainBarGraphOptions: {scaleLabel: '<%=value%>'},
   plotToMake: '',
 
+  onStart: function(){
+    if (localStorage.imageList){
+      app.imageArray = JSON.parse(localStorage.getItem('imageList'));
+      app.allImgObjects = JSON.parse(localStorage.getItem('allImgObjects'));
+    }
+    else{
+      app.initialize();
+    }
+  },
+  storeData: function(){
+    localStorage.setItem('imageList', JSON.stringify(app.imageArray));
+    localStorage.setItem('allImgObjects', JSON.stringify(app.allImgObjects));
+  },
   //builds the initial board state
   initialize: function(){
     //rest stuff
@@ -186,6 +199,7 @@ var app = {
     var chosenId = event.target.id;
     app.updateResults(chosenId);
     app.redraw();
+    app.storeData();
   },
 
   //updates the size of the canvas element when the window is resized
@@ -405,3 +419,9 @@ var app = {
 
 //set up initial board
 app.initialize();
+
+var clearStorage = document.getElementById('clearLS');
+clearStorage.addEventListener('click', clearLS);
+function clearLS(){
+  localStorage.clear();
+}
